@@ -36,6 +36,8 @@ INSTALL_MEDIA=true
 INSTALL_GAMING=false
 INSTALL_OFFICE=true
 INSTALL_COMMUNICATION=true
+INSTALL_NVIDIA=false
+INSTALL_AMD=false
 
 # ============================================
 # Interactive Selection
@@ -64,6 +66,19 @@ select_packages() {
     
     read -p "Install Communication (Discord, Telegram, Slack)? [Y/n]: " choice
     [[ "$choice" =~ ^[Nn]$ ]] && INSTALL_COMMUNICATION=false || INSTALL_COMMUNICATION=true
+
+    # GPU Detection
+    echo ""
+    log "Detecting GPU..."
+    if lspci | grep -i nvidia &>/dev/null; then
+        read -p "NVIDIA GPU detected. Install NVIDIA drivers? [Y/n]: " choice
+        [[ "$choice" =~ ^[Nn]$ ]] && INSTALL_NVIDIA=false || INSTALL_NVIDIA=true
+    fi
+    
+    if lspci | grep -i "amd\|radeon" &>/dev/null; then
+        read -p "AMD GPU detected. Install AMD drivers? [Y/n]: " choice
+        [[ "$choice" =~ ^[Nn]$ ]] && INSTALL_AMD=false || INSTALL_AMD=true
+    fi
     
     echo ""
     log "Selected packages:"
@@ -73,6 +88,8 @@ select_packages() {
     echo "  - Gaming: $INSTALL_GAMING"
     echo "  - Office: $INSTALL_OFFICE"
     echo "  - Communication: $INSTALL_COMMUNICATION"
+    echo "  - NVIDIA Drivers: $INSTALL_NVIDIA"
+    echo "  - AMD Drivers: $INSTALL_AMD"
     echo ""
     
     read -p "Continue with installation? [Y/n]: " confirm
@@ -100,7 +117,7 @@ install_packages() {
     local wayland_pkgs=(
         waybar
         wofi
-        rofi-wayland
+        rofi
         swww
         wlogout
         swaync
@@ -150,6 +167,9 @@ install_packages() {
         grim
         slurp
         polkit-kde-agent
+        sddm
+        qt5-graphicaleffects
+        qt5-quickcontrols
     )
     
     # Development & build tools (REQUIRED for building modules)
@@ -287,6 +307,31 @@ install_packages() {
         )
     fi
 
+    # GPU Drivers
+    local gpu_pkgs=()
+    if [[ "$INSTALL_NVIDIA" == true ]]; then
+        gpu_pkgs+=(
+            nvidia
+            nvidia-utils
+            nvidia-settings
+            lib32-nvidia-utils
+            egl-wayland
+        )
+        log "NVIDIA drivers will be installed"
+    fi
+    
+    if [[ "$INSTALL_AMD" == true ]]; then
+        gpu_pkgs+=(
+            mesa
+            lib32-mesa
+            vulkan-radeon
+            lib32-vulkan-radeon
+            libva-mesa-driver
+            lib32-libva-mesa-driver
+        )
+        log "AMD drivers will be installed"
+    fi
+
     # ============================================
     # Install all packages
     # ============================================
@@ -305,6 +350,7 @@ install_packages() {
         "${gaming_pkgs[@]}"
         "${office_pkgs[@]}"
         "${comm_pkgs[@]}"
+        "${gpu_pkgs[@]}"
     )
 
     # Install official packages
@@ -338,26 +384,7 @@ install_packages() {
 }
 
 # ============================================
-# 2. Clone/Update Dotfiles
-# ============================================
-setup_dotfiles() {
-    log "Setting up dotfiles..."
-    
-    if [[ -d "$DOTFILES_DIR" ]]; then
-        log "Updating existing dotfiles..."
-        cd "$DOTFILES_DIR" && git pull
-    else
-        log "Cloning dotfiles..."
-        mkdir -p "$(dirname "$DOTFILES_DIR")"
-        git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
-        cd "$DOTFILES_DIR"
-        git checkout hyprland
-        cd - > /dev/null
-    fi
-}
-
-# ============================================
-# 3. Create Symlinks
+# 2. Create Symlinks
 # ============================================
 create_symlinks() {
     log "Creating symlinks..."
@@ -395,7 +422,7 @@ create_symlinks() {
 }
 
 # ============================================
-# 4. Setup User Services
+# 3. Setup User Services
 # ============================================
 setup_services() {
     log "Setting up systemd user services..."
@@ -423,7 +450,7 @@ setup_services() {
 }
 
 # ============================================
-# 5. Build Custom Modules
+# 4. Build Custom Modules
 # ============================================
 build_modules() {
     log "Building custom modules..."
@@ -441,7 +468,7 @@ build_modules() {
 }
 
 # ============================================
-# 6. Create Required Directories, Copy Bin Scripts
+# 5. Create Required Directories, Copy Bin Scripts
 # ============================================
 
 create_directories() {
@@ -467,7 +494,7 @@ copy_bin_scripts() {
 }
 
 # ============================================
-# 7. Fix Permissions
+# 6. Fix Permissions
 # ============================================
 fix_permissions() {
     log "Fixing script permissions..."
@@ -477,7 +504,7 @@ fix_permissions() {
 }
 
 # ============================================
-# 8. Post-Install Configuration
+# 7. Post-Install Configuration
 # ============================================
 
 post_install() {
@@ -500,11 +527,38 @@ post_install() {
     
     # Enable systemd user services
     systemctl --user daemon-reload
-    systemctl --user enable --now hypr-monitor-resume.service 2>/dev/null || true
-    systemctl --user enable --now spotlight-wallpaper.service 2>/dev/null || true
-    systemctl --user enable --now spotlight-wallpaper.timer 2>/dev/null || true
+    systemctl --user enable hypr-monitor-resume.service 2>/dev/null || true
+    systemctl --user enable spotlight-wallpaper.service 2>/dev/null || true
+    systemctl --user enable spotlight-wallpaper.timer 2>/dev/null || true
+
+    # Enable system services
+    log "Enabling system services..."
+    sudo systemctl enable sddm.service 2>/dev/null || true
+    sudo systemctl enable NetworkManager.service 2>/dev/null || true
+    sudo systemctl enable bluetooth.service 2>/dev/null || true
     
-    log "Setup complete! Please log out and log back in to Hyprland."
+    # Add user to required groups
+    log "Adding user to required groups..."
+    sudo usermod -aG video,audio,input,docker "$USER" 2>/dev/null || true
+
+    # Setup NVIDIA environment variables if NVIDIA is installed
+    if [[ "$INSTALL_NVIDIA" == true ]] || pacman -Qs nvidia-utils &>/dev/null; then
+        log "NVIDIA detected - configuring Hyprland for NVIDIA..."
+        mkdir -p "$HOME/.config/hypr"
+        if ! grep -q 'LIBVA_DRIVER_NAME' "$HOME/.config/hypr/env.conf" 2>/dev/null; then
+            cat >> "$HOME/.config/hypr/env.conf" << 'EOF'
+
+# NVIDIA Configuration
+env = LIBVA_DRIVER_NAME,nvidia
+env = XDG_SESSION_TYPE,wayland
+env = GBM_BACKEND,nvidia-drm
+env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+env = NVD_BACKEND,direct
+EOF
+        fi
+    fi
+
+    log "Setup complete! Please reboot to start using Hyprland."
 }
 
 # ============================================
@@ -561,10 +615,15 @@ main() {
     log "=========================================="
     echo ""
     warn "Next steps:"
-    echo "  1. Edit $DOTFILES_DIR/hypr/hyprland.conf for your monitors"
-    echo "  2. Update ~/.config/IslamicPrayerTimings/config with your city"
-    echo "  3. Add wallpapers to ~/.local/share/wallpapers/spotlight/"
-    echo "  4. Log out and select Hyprland from your display manager"
+    echo "  1. Reboot your system: sudo reboot"
+    echo "  2. At SDDM login screen, select 'Hyprland' session"
+    echo "  3. Edit $DOTFILES_DIR/hypr/hyprland.conf for your monitors"
+    echo "  4. Update ~/.config/IslamicPrayerTimings/config with your city"
+    echo "  5. Add wallpapers to ~/.local/share/wallpapers/spotlight/"
+    echo ""
+    if [[ "$INSTALL_NVIDIA" == true ]]; then
+        warn "NVIDIA Users: You may need to add 'nvidia_drm.modeset=1' to kernel parameters"
+    fi
 }
 
 # Run if executed directly
