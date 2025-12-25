@@ -14,6 +14,15 @@ warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 ask() { echo -e "${BLUE}[?]${NC} $1"; }
 
+# Run command as root (works whether already root or needs sudo)
+as_root() {
+    if [[ $EUID -eq 0 ]]; then
+        "$@"
+    else
+        sudo "$@"
+    fi
+}
+
 # Configuration
 DOTFILES_REPO="https://github.com/AhmedElazony/dotfiles.git"
 DOTFILES_DIR="$HOME/src/hyprland"
@@ -67,7 +76,9 @@ select_packages() {
     echo ""
     
     read -p "Continue with installation? [Y/n]: " confirm
-    [[ "$confirm" =~ ^[Nn]$ ]] && exit 0
+    if [[ "$confirm" =~ ^[Nn]$ ]]; then
+        exit 0
+    fi
 }
 
 # ============================================
