@@ -1,0 +1,356 @@
+* {
+  font-family: "Fira Code", "JetBrains Mono Nerd Font", "Inter", sans-serif;
+  font-weight: 500;
+}
+
+/* ============================================
+   Color Variables
+   ============================================ */
+@define-color bg rgba(17, 17, 27, 0.95);
+@define-color bg-hover rgba(45, 45, 65, 0.9);
+@define-color accent #89b4fa;
+@define-color accent-secondary #cba6f7;
+@define-color green #a6e3a1;
+@define-color pink #f38ba8;
+@define-color text #cdd6f4;
+@define-color text-secondary #a6adc8;
+@define-color border rgba(137, 180, 250, 0.2);
+
+/* ============================================
+   Control Center
+   ============================================ */
+.control-center {
+  background: @bg;
+  border-radius: 16px;
+  border: 1px solid @border;
+  padding: 12px;
+  margin: 10px;
+}
+
+.control-center-list {
+  background: transparent;
+}
+
+/* ============================================
+   Widgets
+   ============================================ */
+.widget-title {
+  background: @accent;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 6px;
+  color: @bg;
+}
+
+.widget-title > label {
+  font-size: 16px;
+  font-weight: 700;
+  color: @bg;
+}
+
+.widget-title > button {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: none;
+  padding: 8px 14px;
+  color: white;
+  font-weight: 600;
+}
+
+.widget-title > button:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* DND Widget */
+.widget-dnd {
+  background: @bg-hover;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 6px;
+}
+
+.widget-dnd > label {
+  color: @green;
+  font-weight: 600;
+}
+
+.widget-dnd > switch {
+  background: rgba(166, 227, 161, 0.2);
+  border-radius: 12px;
+  min-width: 50px;
+  min-height: 24px;
+}
+
+.widget-dnd > switch:checked {
+  background: @green;
+}
+
+.widget-dnd > switch slider {
+  background: white;
+  border-radius: 10px;
+  min-width: 20px;
+  min-height: 20px;
+  margin: 2px;
+}
+
+/* Inhibitors Widget */
+.widget-inhibitors {
+  background: @bg-hover;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 6px;
+}
+
+.widget-inhibitors > label {
+  color: @pink;
+  font-weight: 600;
+}
+
+.widget-inhibitors > button {
+  background: @pink;
+  border-radius: 8px;
+  border: none;
+  padding: 8px 14px;
+  color: @bg;
+  font-weight: 600;
+}
+
+.widget-inhibitors > button:hover {
+  background: rgba(243, 139, 168, 0.8);
+}
+
+/* MPRIS Widget */
+.widget-mpris {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.widget-mpris-player {
+  background: @bg-hover;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 6px;
+}
+
+.widget-mpris-album-art {
+  border-radius: 8px;
+  min-width: 64px;
+  min-height: 64px;
+  margin-right: 12px;
+}
+
+.widget-mpris-title {
+  color: @text;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.widget-mpris-subtitle {
+  color: @text-secondary;
+  font-size: 12px;
+}
+
+.widget-mpris-player button {
+  background: @accent;
+  border-radius: 16px;
+  border: none;
+  color: @bg;
+  min-width: 32px;
+  min-height: 32px;
+  margin: 2px;
+}
+
+.widget-mpris-player button:hover {
+  background: rgba(137, 180, 250, 0.8);
+}
+
+/* ============================================
+   Notifications
+   ============================================ */
+.notification-row {
+  background: transparent;
+  margin: 4px 0;
+}
+
+.notification {
+  background: @bg-hover;
+  border-radius: 12px;
+  border: 1px solid @border;
+  padding: 0;
+  margin: 4px 6px;
+}
+
+.notification:hover {
+  border-color: @accent;
+}
+
+.notification.critical {
+  border-color: @pink;
+  background: rgba(243, 139, 168, 0.1);
+}
+
+.notification-content {
+  padding: 12px;
+}
+
+.notification-default-action {
+  border-radius: 12px;
+  padding: 0;
+}
+
+.notification-default-action:hover {
+  background: transparent;
+}
+
+/* App icon */
+.image {
+  border-radius: 8px;
+  min-width: 48px;
+  min-height: 48px;
+  margin-right: 12px;
+}
+
+.app-icon {
+  min-width: 24px;
+  min-height: 24px;
+  margin-right: 8px;
+}
+
+/* Text */
+.summary {
+  color: @text;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.body {
+  color: @text-secondary;
+  font-size: 12px;
+}
+
+.time {
+  color: @text-secondary;
+  font-size: 10px;
+  margin-right: 8px;
+}
+
+/* Close button */
+.close-button {
+  background: @pink;
+  border-radius: 12px;
+  border: none;
+  color: @bg;
+  min-height: 24px;
+  min-width: 24px;
+  margin: 8px;
+}
+
+.close-button:hover {
+  background: rgba(243, 139, 168, 0.8);
+}
+
+/* Action buttons */
+.notification-action {
+  background: @accent;
+  border-radius: 8px;
+  border: none;
+  color: @bg;
+  padding: 8px 12px;
+  margin: 4px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.notification-action:hover {
+  background: rgba(137, 180, 250, 0.8);
+}
+
+/* ============================================
+   Floating Notifications
+   ============================================ */
+.floating-notifications {
+  background: transparent;
+}
+
+/* ============================================
+   Notification Groups
+   ============================================ */
+.notification-group {
+  background: transparent;
+}
+
+.notification-group-headers {
+  background: @bg-hover;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 4px 6px;
+  color: @accent;
+  font-weight: 600;
+}
+
+.notification-group-collapse-button {
+  background: @accent;
+  border-radius: 6px;
+  border: none;
+  color: @bg;
+  padding: 4px 8px;
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+scrollbar {
+  background: transparent;
+}
+
+scrollbar slider {
+  background: @accent;
+  border-radius: 4px;
+  min-width: 4px;
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+.control-center .placeholder {
+  color: @text-secondary;
+  font-size: 14px;
+  padding: 40px;
+}
+
+/* ============================================
+   Inline Reply
+   ============================================ */
+.inline-reply {
+  background: @bg;
+  border-radius: 8px;
+  padding: 4px;
+  margin-top: 8px;
+}
+
+.inline-reply-entry {
+  background: @bg-hover;
+  border-radius: 6px;
+  border: none;
+  color: @text;
+  padding: 8px 12px;
+}
+
+.inline-reply-button {
+  background: @accent;
+  border-radius: 6px;
+  border: none;
+  color: @bg;
+  padding: 8px 12px;
+  margin-left: 4px;
+}
+
+/* ============================================
+   Body Image
+   ============================================ */
+.body-image {
+  border-radius: 8px;
+  margin-top: 8px;
+}
