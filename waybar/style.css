@@ -1,0 +1,225 @@
+* {
+  font-family: "JetBrainsMono Nerd Font", "Noto Kufi Arabic", monospace;
+  font-size: 13px;
+  min-height: 0;
+}
+
+window#waybar {
+  background: rgba(30, 30, 46, 0.9);
+  border-radius: 0px;
+  color: #cdd6f4;
+}
+
+/* Workspaces - add rounded background */
+#workspaces {
+  background: rgba(205, 214, 244, 0.05);
+  padding: 2px 6px;
+  margin: 2px 4px;
+  border-radius: 10px;
+}
+
+#workspaces button {
+  padding: 2px 6px;
+  color: #6c7086;
+  background: transparent;
+  border-radius: 6px;
+  margin: 0 1px;
+  border: none;
+}
+
+#workspaces button:hover {
+  background: rgba(108, 112, 134, 0.2);
+  color: #cdd6f4;
+}
+
+#workspaces button.active {
+  background: #89b4fa;
+  color: #1e1e2e;
+  font-weight: bold;
+}
+
+/* Window title */
+#window {
+  padding: 0 12px;
+  color: #a6adc8;
+  font-weight: 500;
+}
+
+/* Clock */
+#clock {
+  padding: 0 12px;
+  color: #f9e2af;
+  font-weight: bold;
+  background: rgba(249, 226, 175, 0.1);
+  border-radius: 10px;
+  margin: 2px 4px;
+}
+
+/* Islamic Prayer Timings */
+#custom-prayerTimings {
+  padding: 0 8px;
+  margin: 2px 4px;
+  border-radius: 10px;
+  color: #a6e3a1;
+  background: rgba(166, 227, 161, 0.1);
+  font-weight: 500;
+}
+
+#custom-prayerTimings:hover {
+  background: rgba(166, 227, 161, 0.15);
+}
+
+/* CPU Module */
+#cpu {
+  padding: 0 8px;
+  margin: 2px 4px;
+  border-radius: 10px;
+  color: #fab387;
+  background: rgba(250, 179, 135, 0.1);
+}
+
+/* Memory Module */
+#memory {
+  padding: 0 8px;
+  margin: 2px 4px;
+  border-radius: 10px;
+  color: #cba6f7;
+  background: rgba(203, 166, 247, 0.1);
+}
+
+/* Packages Module */
+#custom-packages {
+  padding: 0 8px;
+  margin: 2px 4px;
+  border-radius: 10px;
+  color: #94e2d5;
+  background: rgba(148, 226, 213, 0.1);
+}
+
+#custom-packages.updates-available {
+  color: #f9e2af;
+  background: rgba(249, 226, 175, 0.15);
+}
+
+/* Network Module */
+#network {
+  padding: 0 8px;
+  margin: 2px 4px;
+  border-radius: 10px;
+  color: #89b4fa;
+  background: rgba(137, 180, 250, 0.1);
+}
+
+#network:hover {
+  background: rgba(137, 180, 250, 0.2);
+}
+
+/* Microphone Module */
+#custom-microphone {
+  padding: 0 8px;
+  margin: 2px 4px;
+  border-radius: 10px;
+  color: #f38ba8;
+  background: rgba(243, 139, 168, 0.1);
+}
+
+#custom-microphone.mic-active {
+  color: #f38ba8;
+  background: rgba(243, 139, 168, 0.2);
+}
+
+#custom-microphone.mic-inactive {
+  opacity: 0;
+  color: transparent;
+  background: transparent;
+}
+
+/* Audio Module */
+#pulseaudio {
+  padding: 0 8px;
+  margin: 2px 4px;
+  border-radius: 10px;
+  color: #a6e3a1;
+  background: rgba(166, 227, 161, 0.1);
+}
+
+/* Battery Module */
+#battery {
+  padding: 0 8px;
+  margin: 2px 4px;
+  border-radius: 10px;
+  color: #f9e2af;
+  background: rgba(249, 226, 175, 0.1);
+}
+
+#battery.warning {
+  color: #fab387;
+  background: rgba(250, 179, 135, 0.15);
+}
+
+#battery.critical {
+  color: #f38ba8;
+  background: rgba(243, 139, 168, 0.15);
+}
+
+/* System tray - add rounded background */
+#tray {
+  padding: 0 6px;
+  margin: 2px 4px;
+  border-radius: 10px;
+  background: rgba(205, 214, 244, 0.05);
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+}
+
+/* Power button */
+#custom-power {
+  padding: 0 8px;
+  margin: 2px 4px;
+  border-radius: 10px;
+  color: #f38ba8;
+  background: rgba(243, 139, 168, 0.1);
+  font-size: 14px;
+}
+
+#custom-power:hover {
+  background: rgba(243, 139, 168, 0.2);
+}
+
+/* Tooltip */
+tooltip {
+  background: rgba(30, 30, 46, 0.95);
+  border-radius: 10px;
+  color: #cdd6f4;
+  padding: 6px;
+}
+
+/* Notifications Module */
+#custom-notifications {
+    font-family: "JetBrains Mono Nerd Font";
+    font-size: 16px;
+    padding: 0 10px;
+    color: #89b4fa;
+    transition: all 0.2s ease;
+}
+
+#custom-notifications:hover {
+    color: #cba6f7;
+}
+
+/* When there are notifications */
+#custom-notifications.notification {
+    color: #f38ba8;
+}
+
+/* DND mode */
+#custom-notifications.dnd-notification,
+#custom-notifications.dnd-none {
+    color: #a6adc8;
+}

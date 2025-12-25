@@ -1,0 +1,13 @@
+[Unit]
+Description=Spotlight Wallpaper Changer
+Wants=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env bash %h/bin/wallpaper-spotlight.sh next
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=graphical-session.target

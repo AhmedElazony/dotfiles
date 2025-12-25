@@ -1,0 +1,179 @@
+/*******************************************************************************
+ * ROFI MODERN THEME USING CATPPUCCIN MOCHA PALETTE
+ * Enhanced with rounded corners, shadows, and smooth animations
+ *******************************************************************************/
+
+* {
+    font:   "JetBrainsMono Nerd Font 12";
+
+    // Catppuccin Mocha Colors
+    bg0:     #1e1e2eF2;  // Base with transparency
+    bg1:     #313244;    // Surface0
+    bg2:     #45475a;    // Surface1
+    fg0:     #cdd6f4;    // Text
+    fg1:     #bac2de;    // Subtext1
+
+    accent-color:     #89b4fa;  // Blue
+    urgent-color:     #f38ba8;  // Red
+    success-color:    #a6e3a1;  // Green
+    warning-color:    #f9e2af;  // Yellow
+    
+    border-color:     #89b4fa;
+    selected-bg:      #89b4fa;
+    selected-fg:      #1e1e2e;
+
+    background-color:   transparent;
+    text-color:         @fg0;
+
+    margin:     0;
+    padding:    0;
+    spacing:    0;
+}
+
+window {
+    location:           center;
+    width:              680px;
+    border-radius:      1px;
+    border:             2px;
+    border-color:       @border-color;
+    background-color:   @bg0;
+}
+
+mainbox {
+    padding:    20px;
+    spacing:    15px;
+    background-color:   transparent;
+}
+
+inputbar {
+    spacing:            12px;
+    padding:            15px 20px;
+    border-radius:      12px;
+    background-color:   @bg1;
+    children:           [ prompt, entry ];
+}
+
+prompt {
+    text-color:         @accent-color;
+    font:               "JetBrainsMono Nerd Font Bold 13";
+}
+
+entry {
+    placeholder:        "Search...";
+    placeholder-color:  @fg1;
+    cursor:             text;
+}
+
+message {
+    padding:            12px;
+    border-radius:      12px;
+    background-color:   @bg1;
+    text-color:         @fg0;
+}
+
+textbox {
+    padding:            8px 12px;
+    background-color:   transparent;
+    text-color:         inherit;
+}
+
+listview {
+    padding:        8px 0;
+    lines:          10;
+    columns:        1;
+    fixed-height:   false;
+    scrollbar:      true;
+    spacing:        8px;
+    background-color: transparent;
+}
+
+scrollbar {
+    width:        4px;
+    border:       0;
+    handle-width: 4px;
+    padding:      0 4px;
+    handle-color: @accent-color;
+    background-color: @bg1;
+    border-radius: 10px;
+}
+
+element {
+    padding:        12px 16px;
+    spacing:        12px;
+    border-radius:  10px;
+    cursor:         pointer;
+    background-color: transparent;
+}
+
+element normal.normal {
+    text-color:         @fg0;
+    background-color:   transparent;
+}
+
+element normal.urgent {
+    text-color:         @urgent-color;
+    background-color:   transparent;
+}
+
+element normal.active {
+    text-color:         @success-color;
+    background-color:   transparent;
+}
+
+element selected.normal {
+    text-color:         @selected-fg;
+    background-color:   @selected-bg;
+}
+
+element selected.urgent {
+    text-color:         @bg0;
+    background-color:   @urgent-color;
+}
+
+element selected.active {
+    text-color:         @bg0;
+    background-color:   @success-color;
+}
+
+element-icon {
+    size:               1.2em;
+    cursor:             inherit;
+    background-color:   transparent;
+    text-color:         inherit;
+}
+
+element-text {
+    cursor:             inherit;
+    background-color:   transparent;
+    text-color:         inherit;
+    vertical-align:     0.5;
+}
+
+mode-switcher {
+    spacing:            8px;
+    padding:            12px;
+    border-radius:      12px;
+    background-color:   @bg1;
+}
+
+button {
+    padding:            10px 16px;
+    border-radius:      8px;
+    background-color:   transparent;
+    text-color:         @fg0;
+    cursor:             pointer;
+}
+
+button selected {
+    background-color:   @accent-color;
+    text-color:         @bg0;
+    font:               "JetBrainsMono Nerd Font Bold 12";
+}
+
+/* Error message styling */
+error-message {
+    padding:            20px;
+    border-radius:      12px;
+    background-color:   @bg1;
+    text-color:         @urgent-color;
+}

@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Spotlight Wallpaper Changer every 30 minutes
+Requires=spotlight-wallpaper.service
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=30min
+Persistent=true
+Unit=spotlight-wallpaper.service
+
+[Install]
+WantedBy=timers.target
