@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -e
+# Ensure safe shell options
+set -euo pipefail
 
 # Colors for output
 RED='\033[0;31m'
@@ -14,18 +15,17 @@ warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 ask() { echo -e "${BLUE}[?]${NC} $1"; }
 
-# Run command as root (works whether already root or needs sudo)
-as_root() {
-    if [[ $EUID -eq 0 ]]; then
-        "$@"
-    else
-        sudo "$@"
-    fi
-}
+if [[ $EUID -eq 0 ]]; then
+    error "Please run this script as a regular user (not root)."
+fi
+
+if ! sudo -v; then
+    error "This script requires sudo privileges"
+fi
 
 # Configuration
 DOTFILES_REPO="https://github.com/AhmedElazony/dotfiles.git"
-DOTFILES_DIR="$HOME/src/hyprland"
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # ============================================
 # Installation Options (set to true/false)
@@ -55,7 +55,7 @@ select_packages() {
     read -p "Install Browsers (Firefox, Zen, Brave, Chrome)? [Y/n]: " choice
     [[ "$choice" =~ ^[Nn]$ ]] && INSTALL_BROWSERS=false || INSTALL_BROWSERS=true
     
-    read -p "Install Media Apps (VLC, OBS, GIMP, Spotify)? [Y/n]: " choice
+    read -p "Install Media Apps (VLC, OBS, GIMP)? [Y/n]: " choice
     [[ "$choice" =~ ^[Nn]$ ]] && INSTALL_MEDIA=false || INSTALL_MEDIA=true
     
     read -p "Install Gaming (Steam, Lutris, Wine)? [y/N]: " choice
@@ -70,14 +70,18 @@ select_packages() {
     # GPU Detection
     echo ""
     log "Detecting GPU..."
-    if lspci | grep -i nvidia &>/dev/null; then
-        read -p "NVIDIA GPU detected. Install NVIDIA drivers? [Y/n]: " choice
-        [[ "$choice" =~ ^[Nn]$ ]] && INSTALL_NVIDIA=false || INSTALL_NVIDIA=true
-    fi
-    
-    if lspci | grep -i "amd\|radeon" &>/dev/null; then
-        read -p "AMD GPU detected. Install AMD drivers? [Y/n]: " choice
-        [[ "$choice" =~ ^[Nn]$ ]] && INSTALL_AMD=false || INSTALL_AMD=true
+    if command -v lspci &>/dev/null; then
+        if lspci | grep -i nvidia &>/dev/null; then
+            read -p "NVIDIA GPU detected. Install NVIDIA drivers? [Y/n]: " choice
+            [[ "$choice" =~ ^[Nn]$ ]] && INSTALL_NVIDIA=false || INSTALL_NVIDIA=true
+        fi
+
+        if lspci | grep -i "amd\|radeon" &>/dev/null; then
+            read -p "AMD GPU detected. Install AMD drivers? [Y/n]: " choice
+            [[ "$choice" =~ ^[Nn]$ ]] && INSTALL_AMD=false || INSTALL_AMD=true
+        fi
+    else
+        warn "lspci not found; skipping automatic GPU detection. Install 'pciutils' or run script after installing it."
     fi
     
     echo ""
@@ -98,12 +102,51 @@ select_packages() {
     fi
 }
 
+check_dependencies() {
+    local deps=(git curl sudo)
+    for dep in "${deps[@]}"; do
+        command -v "$dep" &>/dev/null || error "Missing required command: $dep"
+    done
+}
+
 # ============================================
-# 1. Install Required Packages
+# 1. Create Required Directories, Copy Bin Scripts
+# ============================================
+
+create_directories() {
+    log "Creating required directories..."
+    
+    mkdir -p "$HOME/.local/share/wallpapers/spotlight"
+    mkdir -p "$HOME/.local/share/IslamicPrayerTimings"
+    mkdir -p "$HOME/.config/IslamicPrayerTimings"
+    mkdir -p "$HOME/.cache"
+    mkdir -p "$HOME/.cache/swww"
+    mkdir -p "$HOME/bin"
+    mkdir -p "$HOME/Pictures/Screenshots"
+    mkdir -p "$HOME/wallpapers"
+    mkdir -p "$HOME/src"
+}
+
+copy_bin_scripts() {
+    log "Copying bin scripts..."
+    
+    if [[ -d "$DOTFILES_DIR/bin" ]]; then
+        cp -r "$DOTFILES_DIR/bin/"* "$HOME/bin/"
+    fi
+}
+
+# ============================================
+# 2. Install Required Packages
 # ============================================
 install_packages() {
+    log "Updating system..."
+    if [[ ! -d /etc/pacman.d/gnupg ]]; then
+        sudo pacman-key --init
+        sudo pacman-key --populate archlinux
+    fi
+    sudo pacman -Syu --noconfirm
+
     log "Installing packages..."
-    
     # Core Hyprland packages (REQUIRED)
     local hyprland_pkgs=(
         hyprland
@@ -180,6 +223,7 @@ install_packages() {
         nlohmann-json
         curl
         libnotify
+        pciutils
     )
     
     # Fonts (REQUIRED)
@@ -360,7 +404,7 @@ install_packages() {
     # Install AUR helper if not present
     if ! command -v yay &> /dev/null; then
         log "Installing yay..."
-        git clone https://aur.archlinux.org/yay.git "$HOME/src/yay"
+        git clone https://aur.archlinux.org/yay.git "$HOME/src/"
         cd "$HOME/src/yay" && makepkg -si --noconfirm
         cd - > /dev/null
     fi
@@ -384,7 +428,7 @@ install_packages() {
 }
 
 # ============================================
-# 2. Create Symlinks
+# 3. Create Symlinks
 # ============================================
 create_symlinks() {
     log "Creating symlinks..."
@@ -413,6 +457,7 @@ create_symlinks() {
         fi
         
         if [[ -d "$src" ]]; then
+            mkdir -p "$(dirname "$dest")"
             ln -sfn "$src" "$dest"
             log "Linked $src -> $dest"
         else
@@ -422,7 +467,7 @@ create_symlinks() {
 }
 
 # ============================================
-# 3. Setup User Services
+# 4. Setup User Services
 # ============================================
 setup_services() {
     log "Setting up systemd user services..."
@@ -437,7 +482,7 @@ setup_services() {
             
             # Replace hardcoded paths with $HOME
             local service_name=$(basename "$service")
-            sed "s|/home/ahmedelazony|$HOME|g" "$service" > "$HOME/.config/systemd/user/$service_name"
+            sed "s|/home/[^/]*|$HOME|g" "$service" > "$HOME/.config/systemd/user/$service_name"
             log "Installed $service_name"
         done
     fi
@@ -450,7 +495,7 @@ setup_services() {
 }
 
 # ============================================
-# 4. Build Custom Modules
+# 5. Build Custom Modules
 # ============================================
 build_modules() {
     log "Building custom modules..."
@@ -464,32 +509,6 @@ build_modules() {
         cmake ..
         make -j$(nproc)
         cd - > /dev/null
-    fi
-}
-
-# ============================================
-# 5. Create Required Directories, Copy Bin Scripts
-# ============================================
-
-create_directories() {
-    log "Creating required directories..."
-    
-    mkdir -p "$HOME/.local/share/wallpapers/spotlight"
-    mkdir -p "$HOME/.local/share/IslamicPrayerTimings"
-    mkdir -p "$HOME/.config/IslamicPrayerTimings"
-    mkdir -p "$HOME/.cache"
-    mkdir -p "$HOME/.cache/swww"
-    mkdir -p "$HOME/bin"
-    mkdir -p "$HOME/Pictures/Screenshots"
-    mkdir -p "$HOME/wallpapers"
-    mkdir -p "$HOME/src"
-}
-
-copy_bin_scripts() {
-    log "Copying bin scripts..."
-    
-    if [[ -d "$DOTFILES_DIR/bin" ]]; then
-        cp -r "$DOTFILES_DIR/bin/"* "$HOME/bin/"
     fi
 }
 
@@ -509,11 +528,16 @@ fix_permissions() {
 
 post_install() {
     log "Running post-install configuration..."
+
+    # Enable lingering for user
+    sudo loginctl enable-linger "$USER" || true
     
     # Set ZSH as default shell
     if [[ "$SHELL" != *"zsh"* ]]; then
         log "Setting ZSH as default shell..."
-        chsh -s /bin/zsh
+        if command -v zsh &>/dev/null && [[ "$SHELL" != "$(which zsh)" ]]; then
+            chsh -s "$(which zsh)" || warn "Failed to set ZSH as default shell"
+        fi
     fi
     
     # Add bin to PATH in .zshrc if not present
@@ -536,6 +560,7 @@ post_install() {
     sudo systemctl enable sddm.service 2>/dev/null || true
     sudo systemctl enable NetworkManager.service 2>/dev/null || true
     sudo systemctl enable bluetooth.service 2>/dev/null || true
+    sudo systemctl enable now docker.service || true
     
     # Add user to required groups
     log "Adding user to required groups..."
@@ -562,10 +587,39 @@ EOF
 }
 
 # ============================================
+# 8. Setup SDDM Theme
+# ============================================
+setup_sddm() {
+    log "Setting up SDDM theme..."
+    
+    local sddm_theme_dir="/usr/share/sddm/themes/corners"
+    local sddm_config_dir="/etc/sddm.conf.d"
+    
+    # Install theme
+    if [[ -d "$DOTFILES_DIR/sddm/themes/corners" ]]; then
+        sudo mkdir -p "$sddm_theme_dir"
+        sudo cp -r "$DOTFILES_DIR/sddm/themes/corners/"* "$sddm_theme_dir/"
+        log "Installed Corners SDDM theme"
+    fi
+    
+    # Install config
+    if [[ -f "$DOTFILES_DIR/sddm/sddm.conf" ]]; then
+        sudo mkdir -p "$sddm_config_dir"
+        sudo cp "$DOTFILES_DIR/sddm/sddm.conf" "$sddm_config_dir/sddm.conf"
+        log "Installed SDDM config"
+    fi
+
+    # Enable SDDM
+    sudo systemctl enable sddm.service
+    log "SDDM enabled"
+}
+
+# ============================================
 # Main
 # ============================================
 main() {
     log "Starting Hyprland environment setup..."
+    local arg="${1:-interactive}"
 
     # Handle command line arguments
     if [[ "$1" == "--minimal" ]]; then
@@ -598,16 +652,17 @@ main() {
         # Interactive mode
         select_packages
     fi
-    
-    install_packages || error "Failed to install packages"
-    setup_dotfiles || error "Failed to setup dotfiles"
+
+    check_dependencies || error "Missing required dependencies"
     create_directories || error "Failed to create directories"
+    install_packages || error "Failed to install packages"
     copy_bin_scripts || error "Failed to copy bin scripts"
     create_symlinks || error "Failed to create symlinks"
     setup_services || error "Failed to setup services"
     build_modules || error "Failed to build modules"
     fix_permissions || error "Failed to fix permissions"
     post_install || error "Failed to run post-install"
+    setup_sddm || error "Failed to setup SDDM"
     
     echo ""
     log "=========================================="
