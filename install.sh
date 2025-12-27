@@ -125,6 +125,7 @@ create_directories() {
     mkdir -p "$HOME/Pictures/Screenshots"
     mkdir -p "$HOME/wallpapers"
     mkdir -p "$HOME/src"
+    mkdir -p "$HOME/.config/tmux"
 }
 
 copy_bin_scripts() {
@@ -180,6 +181,7 @@ install_packages() {
     local utils_pkgs=(
         alacritty
         zsh
+        tmux
         dolphin
         brightnessctl
         playerctl
@@ -438,7 +440,6 @@ create_symlinks() {
         "waybar:$HOME/.config/waybar"
         "alacritty:$HOME/.config/alacritty"
         "rofi:$HOME/.config/rofi"
-        #"dunst:$HOME/.config/dunst"
         "swaync:$HOME/.config/swaync"
         "wlogout:$HOME/.config/wlogout"
         "waypaper:$HOME/.config/waypaper"
@@ -523,7 +524,37 @@ fix_permissions() {
 }
 
 # ============================================
-# 7. Post-Install Configuration
+# 7. Setup Tmux
+# ============================================
+setup_tmux() {
+    log "Setting up Tmux configuration..."
+    
+    local tmux_src="$DOTFILES_DIR/tmux"
+    local tmux_dest="$HOME/.config/tmux"
+    
+    if [[ ! -d "$tmux_src" ]]; then
+        warn "Tmux config not found at $tmux_src, skipping..."
+        return 0
+    fi
+    
+    if [[ -e "$tmux_dest" && ! -L "$tmux_dest" ]]; then
+        warn "Backing up existing $tmux_dest"
+        mv "$tmux_dest" "${tmux_dest}.backup.$(date +%Y%m%d%H%M%S)"
+    fi
+    
+    mkdir -p "$(dirname "$tmux_dest")"
+    ln -sfn "$tmux_src" "$tmux_dest"
+    log "Linked $tmux_src -> $tmux_dest"
+    
+    # Also link to traditional location if tmux.conf exists
+    if [[ -f "$tmux_src/tmux.conf" ]]; then
+        ln -sfn "$tmux_src/tmux.conf" "$HOME/.tmux.conf"
+        log "Linked tmux.conf to $HOME/.tmux.conf"
+    fi
+}
+
+# ============================================
+# 8. Post-Install Configuration
 # ============================================
 
 post_install() {
@@ -560,7 +591,7 @@ post_install() {
     sudo systemctl enable sddm.service 2>/dev/null || true
     sudo systemctl enable NetworkManager.service 2>/dev/null || true
     sudo systemctl enable bluetooth.service 2>/dev/null || true
-    sudo systemctl enable now docker.service || true
+    sudo systemctl enable docker.service || true
     
     # Add user to required groups
     log "Adding user to required groups..."
@@ -587,7 +618,7 @@ EOF
 }
 
 # ============================================
-# 8. Setup SDDM Theme
+# 9. Setup SDDM Theme
 # ============================================
 setup_sddm() {
     log "Setting up SDDM theme..."
@@ -661,6 +692,7 @@ main() {
     setup_services || error "Failed to setup services"
     build_modules || error "Failed to build modules"
     fix_permissions || error "Failed to fix permissions"
+    setup_tmux || error "Failed to setup Tmux"
     post_install || error "Failed to run post-install"
     setup_sddm || error "Failed to setup SDDM"
     
