@@ -595,7 +595,6 @@ post_install() {
 
 	# Enable system services
 	log "Enabling system services..."
-	sudo systemctl enable sddm.service 2>/dev/null || true
 	sudo systemctl enable NetworkManager.service 2>/dev/null || true
 	sudo systemctl enable bluetooth.service 2>/dev/null || true
 	sudo systemctl enable docker.service || true
