@@ -3,6 +3,10 @@ My Arch Linux desktop environment dotfiles.
 
 ![Hyprland Desktop](./assets/screenshot.png)
 
+### Features
+- Spotlight Wallpapers (windows 11 feature)
+![Demo](./assets/spotlight-wallpaper-feature.gif)
+
 ### Installation
 > **Note: You should NOT run the script with root user.**
 
