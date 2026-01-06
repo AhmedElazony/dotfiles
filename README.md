@@ -5,6 +5,7 @@ My Arch Linux desktop environment dotfiles.
 
 ### Features
 - Spotlight Wallpapers (windows 11 feature)
+> **Note: It Works with a systemd service and timer. every 30 minutes the wallpaper changes.**
 ![Demo](./assets/spotlight-wallpaper-feature.gif)
 
 ### Installation
