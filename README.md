@@ -59,3 +59,5 @@ sudo chmod +x install.sh
 | `Super + V` | Toggle clipboard|
 | `Super + 1-9` | Switch to workspace |
 | `Super + Shift + 1-9` | Move window to workspace |
+| `Super + W` | Move to Next Wallpaper in the spotlight wallpapers|
+> and more in the [binding file](./hypr/bindings.conf)
