@@ -20,7 +20,7 @@ window#waybar {
 
 #workspaces button {
   padding: 2px 6px;
-  color: #6c7086;
+  color: #a6b8e0;
   background: transparent;
   border-radius: 6px;
   margin: 0 1px;
@@ -32,8 +32,21 @@ window#waybar {
   color: #cdd6f4;
 }
 
+/* Active workspace */
 #workspaces button.active {
   background: #89b4fa;
+  color: #1e1e2e;
+  font-weight: bold;
+}
+
+/* Empty workspaces */
+#workspaces button.empty {
+  color: #8a8a8a;
+}
+
+/* Visible workspace on this monitor (shows which workspace this monitor is displaying) */
+#workspaces button.visible:not(.active) {
+  background: #657b99;
   color: #1e1e2e;
   font-weight: bold;
 }

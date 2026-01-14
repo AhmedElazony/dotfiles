@@ -23,10 +23,14 @@
             "7": "󰲬",
             "8": "󰲮",
             "9": "󰲰",
-            "10": "󰿬"
+            "10": "󰿬",
+            "active": "󰮯"
         },
         "on-click": "activate",
-        "sort-by-number": true
+        "sort-by-number": true,
+        "persistent-workspaces": {
+            "*": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+        }
     },
 
     "hyprland/window": {
