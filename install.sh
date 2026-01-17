@@ -139,6 +139,15 @@ copy_bin_scripts() {
 	fi
 }
 
+add_conf_files() {
+	log "Adding configuration files..."
+
+	# Copy Electron flags config
+	if [[ -f "$DOTFILES_DIR/electron/electron-flags.conf" ]]; then
+		cp "$DOTFILES_DIR/electron/electron-flags.conf" "$HOME/.config/"
+	fi	
+}
+
 # ============================================
 # 2. Install Required Packages
 # ============================================
@@ -692,6 +701,7 @@ main() {
 
 	check_dependencies || error "Missing required dependencies"
 	create_directories || error "Failed to create directories"
+	add_conf_files || error "Failed to add configuration files"
 	install_packages || error "Failed to install packages"
 	copy_bin_scripts || error "Failed to copy bin scripts"
 	create_symlinks || error "Failed to create symlinks"
