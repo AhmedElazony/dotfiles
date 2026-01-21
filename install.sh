@@ -253,7 +253,7 @@ install_packages() {
 
 	# AUR packages (REQUIRED)
 	local aur_pkgs=(
-		hyprpolkitagent
+		lxqt-policykit
 		waypaper
 		rofi-calc
 		rofi-emoji
