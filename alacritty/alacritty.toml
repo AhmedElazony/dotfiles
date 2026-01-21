@@ -42,11 +42,11 @@ foreground = "#f8f8f2"
 size = 12
 
 [font.bold]
-family = "JetBrains Mono"
+family = "Fira Code"
 style = "Bold"
 
 [font.italic]
-family = "JetBrains Mono"
+family = "Fira Code"
 style = "Italic"
 
 [font.normal]
