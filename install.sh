@@ -500,12 +500,6 @@ setup_services() {
 			log "Installed $service_name"
 		done
 	fi
-
-	systemctl --user daemon-reload
-
-	# Enable specific services
-	systemctl --user enable --now hypr-monitor-resume.service 2>/dev/null || true
-	systemctl --user enable --now spotlight-wallpaper.timer 2>/dev/null || true
 }
 
 # ============================================

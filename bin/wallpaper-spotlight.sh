@@ -365,7 +365,7 @@ set_wallpaper() {
 	fi
 
 	log_message "Setting wallpaper: $(basename "$image_file")"
-	if swww img "$image_file" --transition-type wipe --transition-duration 1; then
+	if swww img "$image_file" --transition-type grow --transition-duration 1; then
 		echo "$image_file" >"$CURRENT_WALLPAPER"
 		log_message "Wallpaper set successfully."
 		return 0
