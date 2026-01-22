@@ -8,6 +8,9 @@ return {
       "html",
       "css",
       "javascript",
+      "vue",
+      "typescript",
+      "angular",
       -- add other languages you need
     })
 

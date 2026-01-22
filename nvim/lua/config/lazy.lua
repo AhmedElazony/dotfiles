@@ -27,11 +27,13 @@ require("lazy").setup({
 
     -- install some lazyvim extras
     -- Import  none-ls plugin for linting
-    { import = "lazyvim.plugins.extras.lsp.none-ls" },
+    -- { import = "lazyvim.plugins.extras.lsp.none-ls" },
     -- import php plugin
     -- { import = "lazyvim.plugins.extras.lang.php" },
     -- Import LuaSnip
     { import = "lazyvim.plugins.extras.coding.luasnip" },
+    -- Import docker plugin
+    { import = "lazyvim.plugins.extras.lang.docker" },
 
     -- import/override with your plugins
     { import = "plugins" },

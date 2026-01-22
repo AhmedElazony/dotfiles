@@ -1,11 +1,16 @@
 return {
-  -- "adalessa/laravel.nvim",
-  -- dependencies = {
-  --   "nvim-telescope/telescope.nvim",
-  --   "tpope/vim-dotenv",
-  --   "MunifTanjim/nui.nvim",
-  --   "nvimtools/none-ls.nvim",
-  -- },
-  -- event = { "VeryLazy" },
-  -- config = true,
+  "adibhanna/laravel.nvim",
+  dependencies = {
+    "MunifTanjim/nui.nvim",
+    "nvim-lua/plenary.nvim",
+  },
+  keys = {
+    { "<leader>la", ":Artisan<cr>", desc = "Laravel Artisan" },
+    { "<leader>lc", ":Composer<cr>", desc = "Composer" },
+    { "<leader>lr", ":LaravelRoute<cr>", desc = "Laravel Routes" },
+    { "<leader>lm", ":LaravelMake<cr>", desc = "Laravel Make" },
+  },
+  config = function()
+    require("laravel").setup()
+  end,
 }

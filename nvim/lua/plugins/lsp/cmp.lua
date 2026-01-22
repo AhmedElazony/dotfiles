@@ -70,6 +70,7 @@ return {
         end, { "i", "s" }),
       }),
       sources = {
+        { name = "laravel" },
         { name = "nvim_lsp" },
         { name = "luasnip" },
         { name = "buffer" },
