@@ -4,7 +4,7 @@ Requires=spotlight-wallpaper.service
 
 [Timer]
 OnBootSec=30s
-OnUnitActiveSec=30min
+OnUnitActiveSec=75min
 Persistent=true
 Unit=spotlight-wallpaper.service
 

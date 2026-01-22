@@ -25,17 +25,17 @@ cursor = "#f8f8f2"
 text = "#282a36"
 
 [colors.normal]
-black = "#44475a"
-blue = "#bd93f9"
+black = "#1d1f21"
+blue = "#7998ff"
 cyan = "#8be9fd"
 green = "#50fa7b"
 magenta = "#ff79c6"
 red = "#ff5555"
-white = "#bbbbbb"
+white = "#f8f8f2"
 yellow = "#f1fa8c"
 
 [colors.primary]
-background = "#282a36"
+background = "#1d1f21"
 foreground = "#f8f8f2"
 
 [font]
@@ -66,5 +66,3 @@ opacity = 0.75
 [window.dimensions]
 columns = 140
 lines = 35
-
-[keyboard]
