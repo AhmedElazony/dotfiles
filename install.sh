@@ -732,6 +732,7 @@ main() {
   check_dependencies || error "Missing required dependencies"
   create_directories || error "Failed to create directories"
   add_conf_files || error "Failed to add configuration files"
+  copy_default_wallpapers || error "Failed to copy default wallpapers"
   install_packages || error "Failed to install packages"
   copy_bin_scripts || error "Failed to copy bin scripts"
   create_symlinks || error "Failed to create symlinks"
