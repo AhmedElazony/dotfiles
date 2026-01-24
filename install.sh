@@ -126,8 +126,9 @@ create_directories() {
   mkdir -p "$HOME/.cache"
   mkdir -p "$HOME/.cache/swww"
   mkdir -p "$HOME/bin"
+  mkdir -p "$HOME/Pictures"
   mkdir -p "$HOME/Pictures/Screenshots"
-  mkdir -p "$HOME/wallpapers"
+  mkdir -p "$HOME/Pictures/Wallpapers"
   mkdir -p "$HOME/src"
   mkdir -p "$HOME/.config/tmux"
 }
@@ -146,6 +147,20 @@ add_conf_files() {
   # Copy Electron flags config
   if [[ -f "$DOTFILES_DIR/electron/electron-flags.conf" ]]; then
     cp "$DOTFILES_DIR/electron/electron-flags.conf" "$HOME/.config/"
+  fi
+}
+
+copy_default_wallpapers() {
+  log "Copying default wallpapers..."
+
+  local default_wallpapers_dir="$DOTFILES_DIR/wallpapers"
+  local target_dir="$HOME/Pictures/Wallpapers"
+
+  if [[ -d "$default_wallpapers_dir" ]]; then
+    cp -r "$default_wallpapers_dir/"* "$target_dir/"
+    log "Default wallpapers copied to $target_dir"
+  else
+    warn "Default wallpapers directory not found at $default_wallpapers_dir"
   fi
 }
 
@@ -717,6 +732,7 @@ main() {
   check_dependencies || error "Missing required dependencies"
   create_directories || error "Failed to create directories"
   add_conf_files || error "Failed to add configuration files"
+  copy_default_wallpapers || error "Failed to copy default wallpapers"
   install_packages || error "Failed to install packages"
   copy_bin_scripts || error "Failed to copy bin scripts"
   create_symlinks || error "Failed to create symlinks"
