@@ -589,12 +589,6 @@ setup_tmux() {
   mkdir -p "$(dirname "$tmux_dest")"
   ln -sfn "$tmux_src" "$tmux_dest"
   log "Linked $tmux_src -> $tmux_dest"
-
-  # Also link to traditional location if tmux.conf exists
-  if [[ -f "$tmux_src/tmux.conf" ]]; then
-    ln -sfn "$tmux_src/tmux.conf" "$HOME/.tmux.conf"
-    log "Linked tmux.conf to $HOME/.tmux.conf"
-  fi
 }
 
 # ============================================
