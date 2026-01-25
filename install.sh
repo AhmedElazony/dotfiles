@@ -34,7 +34,6 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Installation Options (set to true/false)
 # ============================================
 INSTALL_DEVELOPMENT=true
-INSTALL_THEME=true
 INSTALL_BROWSERS=true
 INSTALL_MEDIA=true
 INSTALL_GAMING=false
@@ -206,6 +205,7 @@ install_packages() {
 
   # Terminal & utilities (REQUIRED)
   local utils_pkgs=(
+    vim
     alacritty
     zsh
     eza
@@ -243,8 +243,17 @@ install_packages() {
     slurp
     polkit-kde-agent
     sddm
-    qt5-graphicaleffects
-    qt5-quickcontrols
+    gtk3
+    qt5ct
+    qt6ct
+    qt5
+    qt6
+    kvantum
+    kvantum-theme-materia
+    materia-gtk-theme
+    breeze-icons
+    papirus-icon-theme
+    capitaine-cursors
   )
 
   # Development & build tools (REQUIRED for building modules)
@@ -303,24 +312,6 @@ install_packages() {
       lazydocker
       postman-bin
       dbeaver
-    )
-  fi
-
-  # Theme packages
-  local theme_pkgs=()
-  if [[ "$INSTALL_THEME" == true ]]; then
-    theme_pkgs=(
-      gtk3
-      qt5ct
-      qt6ct
-      qt5
-      qt6
-      kvantum
-      kvantum-theme-materia
-      materia-gtk-theme
-      breeze-icons
-      papirus-icon-theme
-      capitaine-cursors
     )
   fi
 
