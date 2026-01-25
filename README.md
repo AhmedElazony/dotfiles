@@ -11,29 +11,34 @@ My Arch Linux desktop environment dotfiles.
 ### Installation
 > **Note: You should NOT run the script with root user.**
 
-1. create `src` directory in your home directory
+1. Switch to your user (Which is **NOT** the root)
+```bash
+su $user
+```
+
+2. create `src` directory in your home directory
 ```bash
 mkdir -p src && cd ~/src
 ```
 
-2. clone the repo
+3. clone the repo
 ```bash
 git clone https://github.com/AhmedElazony/dotfiles.git
 ```
 
-3. make the `install.sh` script executable
+4. make the `install.sh` script executable
 ```bash
 cd dotfiles
 
 sudo chmod +x install.sh
 ```
 
-4. run the script
+5. run the script
 ```bash
 ./install.sh
 ```
 
-5. Enjoy the system.
+6. Enjoy the system.
 
 ### Post-Installation
 
