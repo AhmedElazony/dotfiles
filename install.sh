@@ -698,7 +698,7 @@ main() {
   local arg="${1:-interactive}"
 
   # Handle command line arguments
-  if [[ "$1" == "--minimal" ]]; then
+  if [[ "${1:-}" == "--minimal" ]]; then
     log "Running minimal installation (core packages only)..."
     INSTALL_DEVELOPMENT=false
     INSTALL_BROWSERS=false
@@ -706,7 +706,7 @@ main() {
     INSTALL_GAMING=false
     INSTALL_OFFICE=false
     INSTALL_COMMUNICATION=false
-  elif [[ "$1" == "--full" ]]; then
+  elif [[ "${1:-}" == "--full" ]]; then
     log "Running full installation (all packages)..."
     INSTALL_DEVELOPMENT=true
     INSTALL_BROWSERS=true
@@ -714,7 +714,7 @@ main() {
     INSTALL_GAMING=true
     INSTALL_OFFICE=true
     INSTALL_COMMUNICATION=true
-  elif [[ "$1" == "--help" || "$1" == "-h" ]]; then
+  elif [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
     echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Options:"
