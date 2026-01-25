@@ -191,7 +191,6 @@ install_packages() {
     wofi
     rofi
     swww
-    wlogout
     swaync
   )
 
@@ -214,7 +213,6 @@ install_packages() {
     brightnessctl
     playerctl
     wl-clipboard
-    clipse
     networkmanager
     network-manager-applet
     blueman
@@ -261,7 +259,6 @@ install_packages() {
   local font_pkgs=(
     ttf-jetbrains-mono-nerd
     ttf-fira-code
-    ttf-inter
     noto-fonts
     noto-fonts-emoji
     noto-fonts-cjk
@@ -271,9 +268,11 @@ install_packages() {
   local aur_pkgs=(
     lxqt-policykit
     waypaper
+    wlogout
     rofi-calc
     rofi-emoji
     tree-sitter-cli
+    clipse
   )
 
   # ============================================
@@ -451,7 +450,9 @@ install_packages() {
   # Install AUR helper if not present
   if ! command -v yay &>/dev/null; then
     log "Installing yay..."
-    git clone https://aur.archlinux.org/yay.git "$HOME/src/"
+    if [[ ! -d "$HOME/src/yay" ]]; then
+      git clone https://aur.archlinux.org/yay.git "$HOME/src/yay"
+    fi
     cd "$HOME/src/yay" && makepkg -si --noconfirm
     cd - >/dev/null
   fi
