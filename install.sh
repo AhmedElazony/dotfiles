@@ -145,7 +145,7 @@ add_conf_files() {
 
   # Copy Electron flags config
   if [[ -f "$DOTFILES_DIR/electron/electron-flags.conf" ]]; then
-    cp "$DOTFILES_DIR/electron/electron-flags.conf" "$HOME/.config/"
+    ln -s "$DOTFILES_DIR/electron/electron-flags.conf" "$HOME/.config/"
   fi
 }
 
