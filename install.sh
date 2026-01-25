@@ -206,6 +206,7 @@ install_packages() {
   # Terminal & utilities (REQUIRED)
   local utils_pkgs=(
     vim
+    nvim
     alacritty
     zsh
     eza
@@ -297,7 +298,6 @@ install_packages() {
   local dev_tools_aur=()
   if [[ "$INSTALL_DEVELOPMENT" == true ]]; then
     dev_tools_pkgs=(
-      neovim
       lazygit
       docker
       docker-compose
