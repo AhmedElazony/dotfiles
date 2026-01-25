@@ -1,15 +1,15 @@
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 
 # Path to your oh-my-zsh installation.
 ZSH=/usr/share/oh-my-zsh/
 
 # Path to powerlevel10k theme
-source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+# source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 # List of plugins used
 plugins=(git sudo zsh-256color zsh-autosuggestions zsh-syntax-highlighting)
@@ -68,14 +68,13 @@ alias p='sudo pacman' # use pacman
 alias vim=nvim
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+#[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 autoload -U colors && colors
 
 # Custom colors for prompt elements
 # PROMPT='%{$fg_bold[white]%}%n%{$reset_color%} %{$fg[red]%}~%{$reset_color%} %# '
 PROMPT='%F{green}%n@%m %F{blue}%~ %#%f '
-
 
 export PATH="$PATH:$HOME/.config/composer/vendor/bin"
 
@@ -85,13 +84,6 @@ export PATH="$HOME/.local/bin:$PATH"
 
 export XDG_SESSION_TYPE=wayland
 export XDG_CURRENT_DESKTOP=Hyprland
-export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
-export XMODIFIERS=@im=fcitx
 export QT_QPA_PLATFORMTHEME=qt6ct
-export BROWSER=brave
-
-# Load Angular CLI autocompletion.
-source <(ng completion script)
 
 [[ ! $DISPLAY && $(tty) = "/dev/tty1" ]] && hyprland
