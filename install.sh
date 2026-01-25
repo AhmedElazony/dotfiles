@@ -191,7 +191,6 @@ install_packages() {
     wofi
     rofi
     swww
-    wlogout
     swaync
   )
 
@@ -214,7 +213,6 @@ install_packages() {
     brightnessctl
     playerctl
     wl-clipboard
-    clipse
     networkmanager
     network-manager-applet
     blueman
@@ -261,7 +259,6 @@ install_packages() {
   local font_pkgs=(
     ttf-jetbrains-mono-nerd
     ttf-fira-code
-    ttf-inter
     noto-fonts
     noto-fonts-emoji
     noto-fonts-cjk
@@ -271,9 +268,11 @@ install_packages() {
   local aur_pkgs=(
     lxqt-policykit
     waypaper
+    wlogout
     rofi-calc
     rofi-emoji
     tree-sitter-cli
+    clipse
   )
 
   # ============================================
@@ -451,7 +450,9 @@ install_packages() {
   # Install AUR helper if not present
   if ! command -v yay &>/dev/null; then
     log "Installing yay..."
-    git clone https://aur.archlinux.org/yay.git "$HOME/src/"
+    if [[ ! -d "$HOME/src/yay" ]]; then
+      git clone https://aur.archlinux.org/yay.git "$HOME/src/yay"
+    fi
     cd "$HOME/src/yay" && makepkg -si --noconfirm
     cd - >/dev/null
   fi
@@ -698,7 +699,7 @@ main() {
   local arg="${1:-interactive}"
 
   # Handle command line arguments
-  if [[ "$1" == "--minimal" ]]; then
+  if [[ "${1:-}" == "--minimal" ]]; then
     log "Running minimal installation (core packages only)..."
     INSTALL_DEVELOPMENT=false
     INSTALL_BROWSERS=false
@@ -706,7 +707,7 @@ main() {
     INSTALL_GAMING=false
     INSTALL_OFFICE=false
     INSTALL_COMMUNICATION=false
-  elif [[ "$1" == "--full" ]]; then
+  elif [[ "${1:-}" == "--full" ]]; then
     log "Running full installation (all packages)..."
     INSTALL_DEVELOPMENT=true
     INSTALL_BROWSERS=true
@@ -714,7 +715,7 @@ main() {
     INSTALL_GAMING=true
     INSTALL_OFFICE=true
     INSTALL_COMMUNICATION=true
-  elif [[ "$1" == "--help" || "$1" == "-h" ]]; then
+  elif [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
     echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Options:"
