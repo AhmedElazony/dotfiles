@@ -187,7 +187,7 @@ install_packages() {
   # Wayland essentials (REQUIRED)
   local wayland_pkgs=(
     waybar
-    wofi
+    #wofi
     rofi
     swww
     swaync
@@ -486,7 +486,7 @@ create_symlinks() {
     "waypaper:$HOME/.config/waypaper"
     "swappy:$HOME/.config/swappy"
     "nvim:$HOME/.config/nvim"
-    "wofi:$HOME/.config/wofi"
+    #"wofi:$HOME/.config/wofi"
     "gtk/gtk-3.0:$HOME/.config/gtk-3.0"
     "qt/qt5ct:$HOME/.config/qt5ct/"
     "qt/qt6ct:$HOME/.config/qt6ct"
