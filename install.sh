@@ -208,6 +208,7 @@ install_packages() {
   local utils_pkgs=(
     alacritty
     zsh
+    eza
     tmux
     dolphin
     brightnessctl
