@@ -211,6 +211,9 @@ install_packages() {
     eza
     tmux
     dolphin
+    kio
+    kio-extras
+    ffmpegthumbs
     brightnessctl
     playerctl
     wl-clipboard
