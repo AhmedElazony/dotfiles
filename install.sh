@@ -290,6 +290,7 @@ install_packages() {
     rofi-emoji
     tree-sitter-cli
     clipse
+    oh-my-zsh-git
   )
 
   # ============================================
