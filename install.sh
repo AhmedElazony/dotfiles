@@ -684,6 +684,10 @@ setup_sddm() {
     log "Installed SDDM config"
   fi
 
+  # Install Hyprland session file
+  sudo mkdir -p "/usr/share/wayland-sessions"
+  sudo cp "$DOTFILES_DIR/sddm/hyprland.desktop" "/usr/share/wayland-sessions/hyprland.desktop"
+
   # Enable SDDM
   sudo systemctl enable sddm.service
   log "SDDM enabled"
@@ -739,8 +743,8 @@ main() {
   build_modules || error "Failed to build modules"
   fix_permissions || error "Failed to fix permissions"
   setup_tmux || error "Failed to setup Tmux"
-  post_install || error "Failed to run post-install"
   setup_sddm || error "Failed to setup SDDM"
+  post_install || error "Failed to run post-install"
 
   echo ""
   log "=========================================="
