@@ -132,11 +132,14 @@ create_directories() {
   mkdir -p "$HOME/.config/tmux"
 }
 
-copy_bin_scripts() {
-  log "Copying bin scripts..."
+link_bin_scripts() {
+  log "Linking bin scripts..."
 
   if [[ -d "$DOTFILES_DIR/bin" ]]; then
-    cp -r "$DOTFILES_DIR/bin/"* "$HOME/bin/"
+    for script in "$DOTFILES_DIR/bin/"*; do
+      ln -sf "$script" "$HOME/bin/$(basename "$script")"
+      log "Linked $script -> $HOME/bin/$(basename "$script")"
+    done
   fi
 }
 
@@ -145,7 +148,7 @@ add_conf_files() {
 
   # Copy Electron flags config
   if [[ -f "$DOTFILES_DIR/electron/electron-flags.conf" ]]; then
-    ln -s "$DOTFILES_DIR/electron/electron-flags.conf" "$HOME/.config/"
+    ln -sf "$DOTFILES_DIR/electron/electron-flags.conf" "$HOME/.config/electron-flags.conf"
   fi
 }
 
@@ -728,7 +731,7 @@ main() {
   add_conf_files || error "Failed to add configuration files"
   copy_default_wallpapers || error "Failed to copy default wallpapers"
   install_packages || error "Failed to install packages"
-  copy_bin_scripts || error "Failed to copy bin scripts"
+  link_bin_scripts || error "Failed to link bin scripts"
   create_symlinks || error "Failed to create symlinks"
   setup_services || error "Failed to setup services"
   build_modules || error "Failed to build modules"
