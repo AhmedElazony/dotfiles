@@ -123,7 +123,7 @@ create_directories() {
   mkdir -p "$HOME/.local/share/IslamicPrayerTimings"
   mkdir -p "$HOME/.config/IslamicPrayerTimings"
   mkdir -p "$HOME/.cache"
-  mkdir -p "$HOME/.cache/swww"
+  mkdir -p "$HOME/.cache/awww"
   mkdir -p "$HOME/bin"
   mkdir -p "$HOME/Pictures"
   mkdir -p "$HOME/Pictures/Screenshots"
@@ -192,7 +192,7 @@ install_packages() {
     waybar
     #wofi
     rofi
-    swww
+    awww
     swaync
   )
 
@@ -614,8 +614,8 @@ post_install() {
     log "Added ~/bin to PATH in .zshrc"
   fi
 
-  # Initialize swww cache directory
-  mkdir -p "$HOME/.cache/swww"
+  # Initialize awww cache directory
+  mkdir -p "$HOME/.cache/awww"
 
   # initialize .zshrc
   cp "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
