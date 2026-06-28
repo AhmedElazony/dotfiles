@@ -6,15 +6,15 @@
 /* ============================================
    Color Variables
    ============================================ */
-@define-color bg rgba(17, 17, 27, 0.95);
-@define-color bg-hover rgba(45, 45, 65, 0.9);
-@define-color accent #89b4fa;
-@define-color accent-secondary #cba6f7;
-@define-color green #a6e3a1;
-@define-color pink #f38ba8;
-@define-color text #cdd6f4;
-@define-color text-secondary #a6adc8;
-@define-color border rgba(137, 180, 250, 0.2);
+@define-color bg rgba(14, 14, 16, 0.95);
+@define-color bg-hover rgba(30, 30, 32, 0.9);
+@define-color accent #7c8cf0;
+@define-color accent-secondary #6fc9e8;
+@define-color green #8bd68a;
+@define-color pink #e86c7c;
+@define-color text #e8e8ea;
+@define-color text-secondary #a0a0a4;
+@define-color border rgba(124, 140, 240, 0.2);
 
 /* ============================================
    Control Center
@@ -75,7 +75,7 @@
 }
 
 .widget-dnd > switch {
-  background: rgba(166, 227, 161, 0.2);
+  background: rgba(139, 214, 138, 0.2);
   border-radius: 12px;
   min-width: 50px;
   min-height: 24px;
@@ -116,7 +116,7 @@
 }
 
 .widget-inhibitors > button:hover {
-  background: rgba(243, 139, 168, 0.8);
+  background: rgba(232, 108, 124, 0.8);
 }
 
 /* MPRIS Widget */
@@ -163,7 +163,7 @@
 }
 
 .widget-mpris-player button:hover {
-  background: rgba(137, 180, 250, 0.8);
+  background: rgba(124, 140, 240, 0.8);
 }
 
 /* ============================================
@@ -248,7 +248,7 @@
 }
 
 .close-button:hover {
-  background: rgba(243, 139, 168, 0.8);
+  background: rgba(232, 108, 124, 0.8);
 }
 
 /* Action buttons */
@@ -264,7 +264,7 @@
 }
 
 .notification-action:hover {
-  background: rgba(137, 180, 250, 0.8);
+  background: rgba(124, 140, 240, 0.8);
 }
 
 /* ============================================

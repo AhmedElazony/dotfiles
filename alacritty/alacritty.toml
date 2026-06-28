@@ -34,6 +34,16 @@ red = "#ff5555"
 white = "#f8f8f2"
 yellow = "#f1fa8c"
 
+[colors.bright]
+black = "#6272a4"
+red = "#ff6e6e"
+green = "#69ff94"
+yellow = "#ffffa5"
+blue = "#7187d1"
+magenta = "#7187d1"
+cyan = "#a4ffff"
+white = "#ffffff"
+
 [colors.primary]
 background = "#1d1f21"
 foreground = "#f8f8f2"
@@ -61,7 +71,7 @@ program = "/bin/zsh"
 blur = true
 decorations = "full"
 dynamic_padding = true
-opacity = 0.75
+opacity = 0.85
 
 [window.dimensions]
 columns = 140

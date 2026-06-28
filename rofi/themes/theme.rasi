@@ -1,26 +1,26 @@
 /*******************************************************************************
- * ROFI MODERN THEME USING CATPPUCCIN MOCHA PALETTE
- * Enhanced with rounded corners, shadows, and smooth animations
+ * ROFI THEME MATCHING QUICKSHELL DARK THEME
+ * Colors from ~/.config/quickshell/bar/DefaultTheme.qml
  *******************************************************************************/
 
 * {
     font:   "JetBrainsMono Nerd Font 12";
 
-    // Catppuccin Mocha Colors
-    bg0:     #1e1e2eF2;  // Base with transparency
-    bg1:     #313244;    // Surface0
-    bg2:     #45475a;    // Surface1
-    fg0:     #cdd6f4;    // Text
-    fg1:     #bac2de;    // Subtext1
+    bg0:     @bg-base;
+    bg1:     @bg-surface;
+    bg2:     @bg-hover;
+    bg3:     @bg-selected;
+    fg0:     @text-primary;
+    fg1:     @text-secondary;
 
-    accent-color:     #89b4fa;  // Blue
-    urgent-color:     #f38ba8;  // Red
-    success-color:    #a6e3a1;  // Green
-    warning-color:    #f9e2af;  // Yellow
+    accent-color:     @accent-primary;
+    urgent-color:     @accent-red;
+    success-color:    @accent-green;
+    warning-color:    @accent-orange;
     
-    border-color:     #89b4fa;
-    selected-bg:      #89b4fa;
-    selected-fg:      #1e1e2e;
+    border-color:     @bg-border;
+    selected-bg:      @accent-primary;
+    selected-fg:      @text-primary;
 
     background-color:   transparent;
     text-color:         @fg0;
@@ -166,7 +166,7 @@ button {
 
 button selected {
     background-color:   @accent-color;
-    text-color:         @bg0;
+    text-color:         @selected-fg;
     font:               "JetBrainsMono Nerd Font Bold 12";
 }
 
