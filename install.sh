@@ -33,12 +33,12 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # ============================================
 # Installation Options (set to true/false)
 # ============================================
-INSTALL_DEVELOPMENT=true
-INSTALL_BROWSERS=true
-INSTALL_MEDIA=true
+INSTALL_DEVELOPMENT=false
+INSTALL_BROWSERS=false
+INSTALL_MEDIA=false
 INSTALL_GAMING=false
 INSTALL_OFFICE=false
-INSTALL_COMMUNICATION=true
+INSTALL_COMMUNICATION=false
 INSTALL_NVIDIA=false
 INSTALL_AMD=false
 
