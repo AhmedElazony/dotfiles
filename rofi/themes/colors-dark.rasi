@@ -1,0 +1,19 @@
+* {
+    /* Quickshell Dark Theme */
+    bg-base:       #0e0e10;
+    bg-surface:    #161618;
+    bg-overlay:    #aa000000;
+    bg-hover:      #1e1e20;
+    bg-selected:   #262628;
+    bg-border:     #222224;
+
+    text-primary:   #e8e8ea;
+    text-secondary: #a0a0a4;
+    text-muted:     #606064;
+
+    accent-primary: #7c8cf0;
+    accent-cyan:    #6fc9e8;
+    accent-green:   #8bd68a;
+    accent-orange:  #f0a86c;
+    accent-red:     #e86c7c;
+}

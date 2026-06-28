@@ -12,6 +12,7 @@ import "../bar" as BarTime
 Scope {
     id: root
     property var theme: DefaultTheme {}
+    property var themeSwitcher: null
     property string font: "SF Pro Display"
 
     property var activePlayer: {
@@ -24,6 +25,11 @@ Scope {
     }
 
     readonly property bool hasPlayer: root.activePlayer !== null
+
+    Process {
+        id: themeProcess
+        running: false
+    }
 
     // ── Calendar state ──────────────────────────────────────
     property int calYear:  Qt.formatDateTime(new Date(), "yyyy") * 1
@@ -204,6 +210,41 @@ Scope {
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: Notif.NotificationService.doNotDisturb
                                     = !Notif.NotificationService.doNotDisturb
+                            }
+                        }
+
+                        // ── Theme toggle ─────────────────────
+                        Rectangle {
+                            Layout.preferredHeight: 30
+                            Layout.preferredWidth: 30
+                            radius: 15
+                            color: themeBtn.containsMouse
+                                   ? root.theme.bgHover : root.theme.bgSurface
+                            Layout.alignment: Qt.AlignVCenter
+                            Text {
+                                anchors.centerIn: parent
+                                text: root.themeSwitcher
+                                      ? (root.themeSwitcher.darkMode ? "" : "") : ""
+                                color: root.theme.textSecondary
+                                font.pixelSize: 12
+                                font.family: root.font
+                            }
+                            MouseArea {
+                                id: themeBtn
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (root.themeSwitcher) {
+                                        const wasDark = root.themeSwitcher.darkMode;
+                                        root.themeSwitcher.toggle();
+                                        themeProcess.command = [
+                                            "/home/ahmedelazony/.config/quickshell/theme-switcher/switch-theme.sh",
+                                            wasDark ? "light" : "dark"
+                                        ];
+                                        themeProcess.running = true;
+                                    }
+                                }
                             }
                         }
 

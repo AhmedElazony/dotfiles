@@ -254,6 +254,10 @@ install_packages() {
     breeze-icons
     papirus-icon-theme
     capitaine-cursors
+	gsettings-desktop-schemas
+	gsettings-system-schemas
+	gsettings-qt5
+	gsettings-qt6
   )
 
   # Development & build tools (REQUIRED for building modules)

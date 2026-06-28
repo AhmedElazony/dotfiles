@@ -1,43 +1,53 @@
 # dotfiles
+
 My Arch Linux desktop environment dotfiles.
 
-![Hyprland Desktop](./assets/screenshot.png)
+![Hyprland Desktop](./assets/screenshot-dark.png)
 
 ### Features
+
 - Spotlight Wallpapers (windows 11 feature)
-> **Note: It Works with a systemd service and timer. every 30 minutes the wallpaper changes.**
-![Demo](./assets/spotlight-wallpaper-feature.gif)
+  > **Note: It Works with a systemd service and timer. every 30 minutes the wallpaper changes.**
+  > ![Demo](./assets/spotlight-wallpaper-feature.gif)
+- Dark/Light Theme Switcher
+  > ![Desktop Light Theme](./assets/screenshot-light.png)
 
 ### Installation
+
 > **Note: You should NOT run the script with root user.**
 
 1. create `src` directory in your home directory
+
 ```bash
 mkdir -p src && cd ~/src
 ```
 
-2. clone the repo
+1. clone the repo
+
 ```bash
 git clone https://github.com/AhmedElazony/dotfiles.git
 ```
 
-3. make the `install.sh` script executable
+1. make the `install.sh` script executable
+
 ```bash
 cd dotfiles
 
 sudo chmod +x install.sh
 ```
 
-4. run the script
+1. run the script
+
 ```bash
 ./install.sh
 ```
 
-5. Enjoy the system.
+1. Enjoy the system.
 
 ### Post-Installation
 
 1. **Reboot** your system
+
    ```bash
    sudo reboot
    ```
@@ -50,14 +60,15 @@ sudo chmod +x install.sh
 
 ## ⌨️ Keybindings
 
-| Keybinding | Action |
-|------------|--------|
-| `Super + Return` | Open terminal (Alacritty) |
-| `Super + Q` | Close active window |
-| `Alt + Space` | Open app launcher (Rofi) |
-| `Super + E` | Open file manager (Dolphin) |
-| `Super + V` | Toggle clipboard|
-| `Super + 1-9` | Switch to workspace |
-| `Super + Shift + 1-9` | Move window to workspace |
-| `Super + W` | Move to Next Wallpaper in the spotlight wallpapers|
+| Keybinding            | Action                                             |
+| --------------------- | -------------------------------------------------- |
+| `Super + Return`      | Open terminal (Alacritty)                          |
+| `Super + Q`           | Close active window                                |
+| `Alt + Space`         | Open app launcher (Rofi)                           |
+| `Super + E`           | Open file manager (Dolphin)                        |
+| `Super + V`           | Toggle clipboard                                   |
+| `Super + 1-9`         | Switch to workspace                                |
+| `Super + Shift + 1-9` | Move window to workspace                           |
+| `Super + W`           | Move to Next Wallpaper in the spotlight wallpapers |
+
 > and more in the [binding file](./hypr/binding.conf)

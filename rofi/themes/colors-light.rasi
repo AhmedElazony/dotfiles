@@ -1,0 +1,19 @@
+* {
+    /* Quickshell Light Theme */
+    bg-base:       #f5f5f5;
+    bg-surface:    #ffffff;
+    bg-overlay:    #aa000000;
+    bg-hover:      #e0e0e0;
+    bg-selected:   #d4d4d4;
+    bg-border:     #c8c8c8;
+
+    text-primary:   #1a1a1a;
+    text-secondary: #555555;
+    text-muted:     #777777;
+
+    accent-primary: #7c8cf0;
+    accent-cyan:    #6fc9e8;
+    accent-green:   #8bd68a;
+    accent-orange:  #f0a86c;
+    accent-red:     #e86c7c;
+}
