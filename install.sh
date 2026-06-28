@@ -120,8 +120,6 @@ create_directories() {
   log "Creating required directories..."
 
   mkdir -p "$HOME/.local/share/wallpapers/spotlight"
-  mkdir -p "$HOME/.local/share/IslamicPrayerTimings"
-  mkdir -p "$HOME/.config/IslamicPrayerTimings"
   mkdir -p "$HOME/.cache"
   mkdir -p "$HOME/.cache/awww"
   mkdir -p "$HOME/bin"
@@ -189,11 +187,9 @@ install_packages() {
 
   # Wayland essentials (REQUIRED)
   local wayland_pkgs=(
-    waybar
-    #wofi
+    quickshell
     rofi
     awww
-    swaync
   )
 
   # Audio (PipeWire stack - REQUIRED for wpctl)
@@ -208,6 +204,7 @@ install_packages() {
 
   # Terminal & utilities (REQUIRED)
   local utils_pkgs=(
+    lxqt-policykit
     vim
     nvim
     alacritty
@@ -245,7 +242,6 @@ install_packages() {
     swappy
     grim
     slurp
-    polkit-kde-agent
     sddm
     gtk3
     qt5ct
@@ -283,9 +279,7 @@ install_packages() {
 
   # AUR packages (REQUIRED)
   local aur_pkgs=(
-    lxqt-policykit
     waypaper
-    wlogout
     rofi-calc
     rofi-emoji
     tree-sitter-cli
@@ -482,15 +476,12 @@ create_symlinks() {
 
   local configs=(
     "hypr:$HOME/.config/hypr"
-    "waybar:$HOME/.config/waybar"
+    "quickshell:$HOME/.config/quickshell"
     "alacritty:$HOME/.config/alacritty"
     "rofi:$HOME/.config/rofi"
-    "swaync:$HOME/.config/swaync"
-    "wlogout:$HOME/.config/wlogout"
     "waypaper:$HOME/.config/waypaper"
     "swappy:$HOME/.config/swappy"
     "nvim:$HOME/.config/nvim"
-    #"wofi:$HOME/.config/wofi"
     "gtk/gtk-3.0:$HOME/.config/gtk-3.0"
     "qt/qt5ct:$HOME/.config/qt5ct/"
     "qt/qt6ct:$HOME/.config/qt6ct"
@@ -539,25 +530,7 @@ setup_services() {
 }
 
 # ============================================
-# 5. Build Custom Modules
-# ============================================
-build_modules() {
-  log "Building custom modules..."
-
-  # Islamic Prayer Timings module
-  local ipt_dir="$DOTFILES_DIR/waybar/modules/Islamic-Prayer-Timings"
-  if [[ -d "$ipt_dir" ]]; then
-    log "Building Islamic Prayer Timings..."
-    mkdir -p "$ipt_dir/build"
-    cd "$ipt_dir/build"
-    cmake ..
-    make -j$(nproc)
-    cd - >/dev/null
-  fi
-}
-
-# ============================================
-# 6. Fix Permissions
+# 5. Fix Permissions
 # ============================================
 fix_permissions() {
   log "Fixing script permissions..."
@@ -567,7 +540,7 @@ fix_permissions() {
 }
 
 # ============================================
-# 7. Setup Tmux
+# 6. Setup Tmux
 # ============================================
 setup_tmux() {
   log "Setting up Tmux configuration..."
@@ -591,7 +564,7 @@ setup_tmux() {
 }
 
 # ============================================
-# 8. Post-Install Configuration
+# 7. Post-Install Configuration
 # ============================================
 
 post_install() {
@@ -608,17 +581,17 @@ post_install() {
     fi
   fi
 
-  # Add bin to PATH in .zshrc if not present
-  if ! grep -q 'export PATH="$HOME/bin:$PATH"' "$HOME/.zshrc" 2>/dev/null; then
-    echo 'export PATH="$HOME/bin:$PATH"' >>"$HOME/.zshrc"
-    log "Added ~/bin to PATH in .zshrc"
-  fi
-
   # Initialize awww cache directory
   mkdir -p "$HOME/.cache/awww"
 
   # initialize .zshrc
   cp "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
+
+  # Add bin to PATH in .zshrc if not present
+  if ! grep -q 'export PATH="$HOME/bin:$PATH"' "$HOME/.zshrc" 2>/dev/null; then
+    echo 'export PATH="$HOME/bin:$PATH"' >>"$HOME/.zshrc"
+    log "Added ~/bin to PATH in .zshrc"
+  fi
 
   # Enable systemd user services
   systemctl --user daemon-reload
@@ -657,7 +630,7 @@ EOF
 }
 
 # ============================================
-# 9. Setup SDDM Theme
+# 8. Setup SDDM Theme
 # ============================================
 setup_sddm() {
   log "Setting up SDDM theme..."
@@ -735,7 +708,6 @@ main() {
   link_bin_scripts || error "Failed to link bin scripts"
   create_symlinks || error "Failed to create symlinks"
   setup_services || error "Failed to setup services"
-  build_modules || error "Failed to build modules"
   fix_permissions || error "Failed to fix permissions"
   setup_tmux || error "Failed to setup Tmux"
   setup_sddm || error "Failed to setup SDDM"
@@ -750,8 +722,7 @@ main() {
   echo "  1. Reboot your system: sudo reboot"
   echo "  2. At SDDM login screen, select 'Hyprland' session"
   echo "  3. Edit $DOTFILES_DIR/hypr/hyprland.conf for your monitors"
-  echo "  4. Update ~/.config/IslamicPrayerTimings/config with your city"
-  echo "  5. Add wallpapers to ~/.local/share/wallpapers/spotlight/"
+  echo "  4. Add wallpapers to ~/.local/share/wallpapers/spotlight/"
   echo ""
   if [[ "$INSTALL_NVIDIA" == true ]]; then
     warn "NVIDIA Users: You may need to add 'nvidia_drm.modeset=1' to kernel parameters"
