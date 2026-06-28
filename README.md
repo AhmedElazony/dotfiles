@@ -11,6 +11,7 @@ My Arch Linux desktop environment dotfiles.
   > ![Demo](./assets/spotlight-wallpaper-feature.gif)
 - Dark/Light Theme Switcher
   > ![Desktop Light Theme](./assets/screenshot-light.png)
+- Hijri Calendar
 
 ### Installation
 
