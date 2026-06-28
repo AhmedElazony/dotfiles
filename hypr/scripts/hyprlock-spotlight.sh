@@ -8,7 +8,7 @@ wallpaper=$(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -
 
 # Fallback if no wallpaper found
 if [[ -z "$wallpaper" || ! -f "$wallpaper" ]]; then
-	wallpaper="$HOME/wallpapers/dan-otis-OYFHT4X5isg-unsplash.jpg"
+  wallpaper="$HOME/Pictures/wallpapers/best-wallpaper.jpg"
 fi
 
 # Create symlink
