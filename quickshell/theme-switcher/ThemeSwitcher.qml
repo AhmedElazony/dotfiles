@@ -8,7 +8,7 @@ import "../notifications" as Notif
 QtObject {
     id: root
 
-    readonly property string themeStateFile: Quickshell.shellDir + "/theme-state"
+    readonly property string themeStateFile: Quickshell.shellDir + "/theme-switcher/theme-state"
 
     property bool darkMode: true
 
