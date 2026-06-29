@@ -40,6 +40,7 @@ Scope {
     property bool micRecording: false
     property int pkgCount: 0
     property int pkgUpdates: 0
+    property real mediaProgress: 0
 
     FileView {
         id: brightnessFile
@@ -124,6 +125,21 @@ Scope {
         running: true
         repeat: true
         onTriggered: pkgProc.running = true
+    }
+
+    Timer {
+        interval: 500
+        running: true
+        repeat: true
+        onTriggered: {
+            if (root.activePlayer) {
+                const pos = Number(root.activePlayer.position) || 0;
+                const len = Number(root.activePlayer.length) || Number(root.activePlayer.metadata?.["mpris:length"]) || 0;
+                root.mediaProgress = len > 0 ? pos / len : 0;
+            } else {
+                root.mediaProgress = 0;
+            }
+        }
     }
 
     Variants {
@@ -239,10 +255,11 @@ Scope {
                     // Now Playing
                     Rectangle {
                         height: 24
-                        width: nowPlayingContent.width + 16
+                        width: nowPlayingRow.width + 16
                         radius: 12
                         color: root.theme.bgSurface
                         visible: root.activePlayer !== null
+                        clip: true
 
                         Accessible.role: Accessible.Button
                         Accessible.name: {
@@ -253,18 +270,61 @@ Scope {
                         }
 
                         Row {
-                            id: nowPlayingContent
+                            id: nowPlayingRow
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
-                            anchors.leftMargin: 8
-                            spacing: 6
+                            anchors.leftMargin: 4
+                            spacing: 2
 
-                            Text {
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: root.activePlayer && root.activePlayer.isPlaying ? "󰐊" : "󰏤"
-                                color: root.theme.accentPrimary
-                                font.pixelSize: 14
-                                font.family: root.font
+                            Item {
+                                width: 22
+                                height: 22
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: ""
+                                    color: root.theme.textSecondary
+                                    font.pixelSize: 11
+                                    font.family: root.font
+                                }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.activePlayer?.previous()
+                                }
+                            }
+
+                            Item {
+                                width: 22
+                                height: 22
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: root.activePlayer?.isPlaying ? "" : ""
+                                    color: root.theme.accentPrimary
+                                    font.pixelSize: 11
+                                    font.family: root.font
+                                }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.activePlayer?.togglePlaying()
+                                }
+                            }
+
+                            Item {
+                                width: 22
+                                height: 22
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: ""
+                                    color: root.theme.textSecondary
+                                    font.pixelSize: 11
+                                    font.family: root.font
+                                }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.activePlayer?.next()
+                                }
                             }
 
                             Text {
@@ -279,14 +339,35 @@ Scope {
                                 font.pixelSize: 11
                                 font.family: root.font
                                 elide: Text.ElideRight
-                                width: Math.min(implicitWidth, 200)
+                                width: Math.min(implicitWidth, 160)
                             }
-                        }
 
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: root.activePlayer.togglePlaying()
+                            Row {
+                                spacing: 2
+                                anchors.verticalCenter: parent.verticalCenter
+                                visible: root.activePlayer?.isPlaying ?? false
+
+                                Repeater {
+                                    model: 4
+
+                                    Rectangle {
+                                        width: 3
+                                        height: 6
+                                        radius: 1.5
+                                        color: root.theme.accentPrimary
+                                        anchors.verticalCenter: parent.verticalCenter
+
+                                        NumberAnimation on height {
+                                            duration: 300 + index * 100
+                                            loops: Animation.Infinite
+                                            from: 4
+                                            to: 14
+                                            running: root.activePlayer?.isPlaying ?? false
+                                            easing.type: Easing.InOutSine
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
