@@ -161,21 +161,32 @@ Scope {
                         spacing: 3
 
                         Repeater {
-                            model: Hyprland.workspaces
+                            model: 9
 
                             Rectangle {
                                 id: wsPill
-                                required property var modelData
+                                required property int index
+                                readonly property int wsId: index + 1
+                                readonly property var ws: Hyprland.workspaces.values.find(w => w.id === wsId)
+                                readonly property bool isFocused: Hyprland.focusedWorkspace?.id === wsId
+                                readonly property bool isUrgent: ws?.urgent ?? false
+                                readonly property bool isOtherActive: (ws?.active ?? false) && !isFocused
+                                readonly property bool hasWindows: ws != null && ws.toplevels.values.length > 0
+
                                 property bool urgentBlink: false
 
                                 Accessible.role: Accessible.Button
-                                Accessible.name: "Workspace " + modelData.id + (modelData.focused ? ", active" : "") + (modelData.urgent ? ", urgent" : "")
+                                Accessible.name: "Workspace " + wsId + (isFocused ? ", active" : "") + (isUrgent ? ", urgent" : "")
 
-                                width: modelData.focused ? 32 : 24
+                                width: isFocused ? 32 : 24
                                 height: 24
                                 radius: 12
-                                color: modelData.focused ? root.theme.accentPrimary :
-                                modelData.urgent && urgentBlink ? root.theme.accentRed : root.theme.bgSurface
+                                border.width: isOtherActive ? 1 : 0
+                                border.color: root.theme.accentPrimary
+                                color: isFocused ? root.theme.accentPrimary :
+                                isUrgent && urgentBlink ? root.theme.accentRed :
+                                hasWindows ? root.theme.bgSelected :
+                                root.theme.bgSurface
 
                                 Behavior on color {
                                     ColorAnimation { duration: 150 }
@@ -183,7 +194,7 @@ Scope {
 
                                 SequentialAnimation {
                                     loops: Animation.Infinite
-                                    running: wsPill.modelData.urgent && !wsPill.modelData.focused
+                                    running: isUrgent && !isFocused
 
                                     PropertyAction { target: wsPill; property: "urgentBlink"; value: true }
                                     PauseAnimation { duration: 500 }
@@ -195,16 +206,27 @@ Scope {
 
                                 Text {
                                     anchors.centerIn: parent
-                                    text: wsPill.modelData.id
-                                    color: wsPill.modelData.focused ? root.theme.textFocused : root.theme.textPrimary
+                                    text: wsPill.wsId
+                                    color: isFocused ? root.theme.textFocused : root.theme.textPrimary
                                     font.pixelSize: 11
                                     font.family: root.font
-                                    font.bold: wsPill.modelData.focused
+                                    font.bold: isFocused
+                                }
+
+                                Rectangle {
+                                    width: 3
+                                    height: 3
+                                    radius: 1.5
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 3
+                                    color: root.theme.accentPrimary
+                                    visible: hasWindows && !isFocused && !isOtherActive
                                 }
 
                                 MouseArea {
                                     anchors.fill: parent
-                                    onClicked: wsPill.modelData.activate()
+                                    onClicked: Hyprland.dispatch("workspace " + wsPill.wsId)
                                 }
 
                                 Behavior on width {
