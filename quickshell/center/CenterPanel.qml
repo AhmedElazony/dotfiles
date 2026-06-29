@@ -41,10 +41,58 @@ Scope {
         "July","August","September","October","November","December"
     ]
     readonly property var dayNames: ["Mo","Tu","We","Th","Fr","Sa","Su"]
+    readonly property var hijriMonthNames: [
+        "Muharram","Safar","Rabi' I","Rabi' II",
+        "Jumada I","Jumada II","Rajab","Sha'ban",
+        "Ramadan","Shawwal","Dhu al-Qi'dah","Dhu al-Hijjah"
+    ]
 
     readonly property int todayYear:  Qt.formatDateTime(new Date(), "yyyy") * 1
     readonly property int todayMonth: Qt.formatDateTime(new Date(), "M")    * 1
     readonly property int todayDay:   Qt.formatDateTime(new Date(), "d")    * 1
+
+    // Hijri today reference
+    property var hijriToday: ({})
+    property var hijriMonthData: []
+    property int hijriFetchId: 0
+
+    function fetchHijriMonth() {
+        const id = ++root.hijriFetchId;
+        const req = new XMLHttpRequest();
+        req.open("GET", "https://api.aladhan.com/v1/gToHCalendar/" + root.calMonth + "/" + root.calYear);
+        req.onreadystatechange = function() {
+            if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
+                if (id !== root.hijriFetchId) return;
+                try {
+                    const data = JSON.parse(req.responseText);
+                    if (data.code === 200) root.hijriMonthData = data.data;
+                } catch (e) {}
+            }
+        };
+        req.send();
+    }
+
+    function fetchHijriToday() {
+        const dd = ("0" + root.todayDay).slice(-2);
+        const mm = ("0" + root.todayMonth).slice(-2);
+        const req = new XMLHttpRequest();
+        req.open("GET", "https://api.aladhan.com/v1/gToH?date=" + dd + "-" + mm + "-" + root.todayYear);
+        req.onreadystatechange = function() {
+            if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
+                try {
+                    const data = JSON.parse(req.responseText);
+                    if (data.code === 200) {
+                        root.hijriToday = {
+                            day: data.data.hijri.day,
+                            month: data.data.hijri.month.number,
+                            year: data.data.hijri.year
+                        };
+                    }
+                } catch (e) {}
+            }
+        };
+        req.send();
+    }
 
     function firstWeekday(year, month) {
         const d = new Date(year, month - 1, 1).getDay();
@@ -66,6 +114,14 @@ Scope {
     }
 
     property var cells: root.buildCells(root.calYear, root.calMonth)
+
+    onCalYearChanged: root.fetchHijriMonth()
+    onCalMonthChanged: root.fetchHijriMonth()
+
+    Component.onCompleted: {
+        root.fetchHijriMonth();
+        root.fetchHijriToday();
+    }
 
     // ── Media helpers ───────────────────────────────────────
     function formatTime(us) {
@@ -707,14 +763,40 @@ Scope {
                                 }
                             }
 
-                            Text {
+                            ColumnLayout {
                                 Layout.fillWidth: true
-                                text: root.monthNames[root.calMonth - 1] + "  " + root.calYear
-                                color: root.theme.textPrimary
-                                font.pixelSize: 13
-                                font.bold: true
-                                font.family: root.font
-                                horizontalAlignment: Text.AlignHCenter
+                                spacing: 0
+
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: root.monthNames[root.calMonth - 1] + "  " + root.calYear
+                                    color: root.theme.textPrimary
+                                    font.pixelSize: 13
+                                    font.bold: true
+                                    font.family: root.font
+                                    horizontalAlignment: Text.AlignHCenter
+                                }
+
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: {
+                                        if (root.hijriMonthData.length === 0) return "";
+                                        const d = root.hijriMonthData;
+                                        const first = d[0].hijri;
+                                        const last = d[d.length - 1].hijri;
+                                        const firstM = Number(first.month.number);
+                                        const lastM = Number(last.month.number);
+                                        if (firstM !== lastM || first.year !== last.year) {
+                                            return root.hijriMonthNames[firstM - 1] + " " + first.year
+                                                + "  –  " + root.hijriMonthNames[lastM - 1] + " " + last.year + " AH";
+                                        }
+                                        return root.hijriMonthNames[firstM - 1] + " " + first.year + " AH";
+                                    }
+                                    color: root.theme.textMuted
+                                    font.pixelSize: 10
+                                    font.family: root.font
+                                    horizontalAlignment: Text.AlignHCenter
+                                }
                             }
 
                             Rectangle {
@@ -793,9 +875,13 @@ Scope {
                                         && dayVal === root.todayDay
                                         && root.calMonth === root.todayMonth
                                         && root.calYear === root.todayYear
+                                    readonly property bool hijriMonthStart: dayVal > 1
+                                        && root.hijriMonthData.length >= dayVal
+                                        && Number(root.hijriMonthData[dayVal - 1].hijri.month.number)
+                                           !== Number(root.hijriMonthData[dayVal - 2].hijri.month.number)
 
                                     width: dayGrid.width / 7
-                                    height: 30
+                                    height: 36
 
                                     Rectangle {
                                         anchors.centerIn: parent
@@ -804,15 +890,41 @@ Scope {
                                                ? root.theme.accentPrimary : "transparent"
                                     }
 
-                                    Text {
+                                    Rectangle {
+                                        width: 14
+                                        height: 2
+                                        radius: 1
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 3
+                                        color: root.theme.accentPrimary
+                                        visible: hijriMonthStart
+                                    }
+
+                                    Column {
                                         anchors.centerIn: parent
-                                        text: dayVal > 0 ? dayVal : ""
-                                        color: isToday   ? root.theme.bgBase
-                                             : isWeekend ? root.theme.accentRed
-                                             :              root.theme.textPrimary
-                                        font.pixelSize: 12
-                                        font.family: root.font
-                                        font.bold: isToday
+                                        spacing: -1
+
+                                        Text {
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: dayVal > 0 ? dayVal : ""
+                                            color: isToday   ? root.theme.bgBase
+                                                 : isWeekend ? root.theme.accentRed
+                                                 :              root.theme.textPrimary
+                                            font.pixelSize: 12
+                                            font.family: root.font
+                                            font.bold: isToday
+                                        }
+
+                                        Text {
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: dayVal > 0 && root.hijriMonthData.length >= dayVal
+                                                ? root.hijriMonthData[dayVal - 1].hijri.day
+                                                : ""
+                                            color: root.theme.textMuted
+                                            font.pixelSize: 8
+                                            font.family: root.font
+                                        }
                                     }
                                 }
                             }
