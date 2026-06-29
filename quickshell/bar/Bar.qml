@@ -237,7 +237,7 @@ Scope {
                                     anchors.bottom: parent.bottom
                                     anchors.bottomMargin: 3
                                     color: root.theme.accentPrimary
-                                    visible: hasWindows && !isFocused && !isOtherActive
+                                    visible: hasWindows && !isFocused
                                 }
 
                                 MouseArea {
