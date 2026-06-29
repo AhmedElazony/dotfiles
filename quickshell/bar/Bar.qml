@@ -40,6 +40,7 @@ Scope {
     property bool micRecording: false
     property int pkgCount: 0
     property int pkgUpdates: 0
+    property real mediaProgress: 0
 
     FileView {
         id: brightnessFile
@@ -126,6 +127,21 @@ Scope {
         onTriggered: pkgProc.running = true
     }
 
+    Timer {
+        interval: 500
+        running: true
+        repeat: true
+        onTriggered: {
+            if (root.activePlayer) {
+                const pos = Number(root.activePlayer.position) || 0;
+                const len = Number(root.activePlayer.length) || Number(root.activePlayer.metadata?.["mpris:length"]) || 0;
+                root.mediaProgress = len > 0 ? pos / len : 0;
+            } else {
+                root.mediaProgress = 0;
+            }
+        }
+    }
+
     Variants {
         model: Quickshell.screens
 
@@ -161,21 +177,32 @@ Scope {
                         spacing: 3
 
                         Repeater {
-                            model: Hyprland.workspaces
+                            model: 9
 
                             Rectangle {
                                 id: wsPill
-                                required property var modelData
+                                required property int index
+                                readonly property int wsId: index + 1
+                                readonly property var ws: Hyprland.workspaces.values.find(w => w.id === wsId)
+                                readonly property bool isFocused: Hyprland.focusedWorkspace?.id === wsId
+                                readonly property bool isUrgent: ws?.urgent ?? false
+                                readonly property bool isOtherActive: (ws?.active ?? false) && !isFocused
+                                readonly property bool hasWindows: ws != null && ws.toplevels.values.length > 0
+
                                 property bool urgentBlink: false
 
                                 Accessible.role: Accessible.Button
-                                Accessible.name: "Workspace " + modelData.id + (modelData.focused ? ", active" : "") + (modelData.urgent ? ", urgent" : "")
+                                Accessible.name: "Workspace " + wsId + (isFocused ? ", active" : "") + (isUrgent ? ", urgent" : "")
 
-                                width: modelData.focused ? 32 : 24
+                                width: isFocused ? 32 : 24
                                 height: 24
                                 radius: 12
-                                color: modelData.focused ? root.theme.accentPrimary :
-                                modelData.urgent && urgentBlink ? root.theme.accentRed : root.theme.bgSurface
+                                border.width: isOtherActive ? 1 : 0
+                                border.color: root.theme.accentPrimary
+                                color: isFocused ? root.theme.accentPrimary :
+                                isUrgent && urgentBlink ? root.theme.accentRed :
+                                hasWindows ? root.theme.bgSelected :
+                                root.theme.bgSurface
 
                                 Behavior on color {
                                     ColorAnimation { duration: 150 }
@@ -183,7 +210,7 @@ Scope {
 
                                 SequentialAnimation {
                                     loops: Animation.Infinite
-                                    running: wsPill.modelData.urgent && !wsPill.modelData.focused
+                                    running: isUrgent && !isFocused
 
                                     PropertyAction { target: wsPill; property: "urgentBlink"; value: true }
                                     PauseAnimation { duration: 500 }
@@ -195,16 +222,27 @@ Scope {
 
                                 Text {
                                     anchors.centerIn: parent
-                                    text: wsPill.modelData.id
-                                    color: wsPill.modelData.focused ? root.theme.textFocused : root.theme.textPrimary
+                                    text: wsPill.wsId
+                                    color: isFocused ? root.theme.textFocused : root.theme.textPrimary
                                     font.pixelSize: 11
                                     font.family: root.font
-                                    font.bold: wsPill.modelData.focused
+                                    font.bold: isFocused
+                                }
+
+                                Rectangle {
+                                    width: 3
+                                    height: 3
+                                    radius: 1.5
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 3
+                                    color: root.theme.accentPrimary
+                                    visible: hasWindows && !isFocused && !isOtherActive
                                 }
 
                                 MouseArea {
                                     anchors.fill: parent
-                                    onClicked: wsPill.modelData.activate()
+                                    onClicked: Hyprland.dispatch("workspace " + wsPill.wsId)
                                 }
 
                                 Behavior on width {
@@ -217,10 +255,11 @@ Scope {
                     // Now Playing
                     Rectangle {
                         height: 24
-                        width: nowPlayingContent.width + 16
+                        width: nowPlayingRow.width + 16
                         radius: 12
                         color: root.theme.bgSurface
                         visible: root.activePlayer !== null
+                        clip: true
 
                         Accessible.role: Accessible.Button
                         Accessible.name: {
@@ -231,18 +270,61 @@ Scope {
                         }
 
                         Row {
-                            id: nowPlayingContent
+                            id: nowPlayingRow
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
-                            anchors.leftMargin: 8
-                            spacing: 6
+                            anchors.leftMargin: 4
+                            spacing: 2
 
-                            Text {
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: root.activePlayer && root.activePlayer.isPlaying ? "󰐊" : "󰏤"
-                                color: root.theme.accentPrimary
-                                font.pixelSize: 14
-                                font.family: root.font
+                            Item {
+                                width: 22
+                                height: 22
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: ""
+                                    color: root.theme.textSecondary
+                                    font.pixelSize: 11
+                                    font.family: root.font
+                                }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.activePlayer?.previous()
+                                }
+                            }
+
+                            Item {
+                                width: 22
+                                height: 22
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: root.activePlayer?.isPlaying ? "" : ""
+                                    color: root.theme.accentPrimary
+                                    font.pixelSize: 11
+                                    font.family: root.font
+                                }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.activePlayer?.togglePlaying()
+                                }
+                            }
+
+                            Item {
+                                width: 22
+                                height: 22
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: ""
+                                    color: root.theme.textSecondary
+                                    font.pixelSize: 11
+                                    font.family: root.font
+                                }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.activePlayer?.next()
+                                }
                             }
 
                             Text {
@@ -257,14 +339,35 @@ Scope {
                                 font.pixelSize: 11
                                 font.family: root.font
                                 elide: Text.ElideRight
-                                width: Math.min(implicitWidth, 200)
+                                width: Math.min(implicitWidth, 160)
                             }
-                        }
 
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: root.activePlayer.togglePlaying()
+                            Row {
+                                spacing: 2
+                                anchors.verticalCenter: parent.verticalCenter
+                                visible: root.activePlayer?.isPlaying ?? false
+
+                                Repeater {
+                                    model: 4
+
+                                    Rectangle {
+                                        width: 3
+                                        height: 6
+                                        radius: 1.5
+                                        color: root.theme.accentPrimary
+                                        anchors.verticalCenter: parent.verticalCenter
+
+                                        NumberAnimation on height {
+                                            duration: 300 + index * 100
+                                            loops: Animation.Infinite
+                                            from: 4
+                                            to: 14
+                                            running: root.activePlayer?.isPlaying ?? false
+                                            easing.type: Easing.InOutSine
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
