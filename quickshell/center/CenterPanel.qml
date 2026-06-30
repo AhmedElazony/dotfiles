@@ -47,9 +47,9 @@ Scope {
         "Ramadan","Shawwal","Dhu al-Qi'dah","Dhu al-Hijjah"
     ]
 
-    readonly property int todayYear:  Qt.formatDateTime(new Date(), "yyyy") * 1
-    readonly property int todayMonth: Qt.formatDateTime(new Date(), "M")    * 1
-    readonly property int todayDay:   Qt.formatDateTime(new Date(), "d")    * 1
+    property int todayYear:  Qt.formatDateTime(new Date(), "yyyy") * 1
+    property int todayMonth: Qt.formatDateTime(new Date(), "M")    * 1
+    property int todayDay:   Qt.formatDateTime(new Date(), "d")    * 1
 
     // Hijri today reference
     property var hijriToday: ({})
@@ -121,6 +121,18 @@ Scope {
     Component.onCompleted: {
         root.fetchHijriMonth();
         root.fetchHijriToday();
+    }
+
+    Timer {
+        interval: 60000
+        running: true
+        repeat: true
+        onTriggered: {
+            root.todayYear = Qt.formatDateTime(new Date(), "yyyy") * 1;
+            root.todayMonth = Qt.formatDateTime(new Date(), "M") * 1;
+            root.todayDay = Qt.formatDateTime(new Date(), "d") * 1;
+            root.fetchHijriToday();
+        }
     }
 
     // ── Media helpers ───────────────────────────────────────
