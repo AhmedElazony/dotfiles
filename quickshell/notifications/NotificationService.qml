@@ -28,8 +28,6 @@ Singleton {
         keepOnReload:        false
 
         onNotification: function(notification) {
-            if (root.doNotDisturb) return;
-
             if (!notification.appName && !notification.summary
             && !notification.body && !notification.image) return;
 

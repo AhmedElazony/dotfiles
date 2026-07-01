@@ -31,7 +31,7 @@ Scope {
             required property var modelData
             screen: modelData
 
-            visible: !NotificationService.centerVisible && NotificationService.notifications.length > 0
+            visible: !NotificationService.centerVisible && NotificationService.notifications.length > 0 && !NotificationService.doNotDisturb
             focusable: false
             color: "transparent"
 
