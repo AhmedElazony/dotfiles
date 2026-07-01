@@ -412,7 +412,7 @@ Scope {
                                 height: 14
                                 radius: 7
                                 color: root.theme.accentRed
-                                visible: Notif.NotificationService.count > 0
+                                visible: Notif.NotificationService.count > 0 && !Notif.NotificationService.doNotDisturb
 
                                 Text {
                                     anchors.centerIn: parent
