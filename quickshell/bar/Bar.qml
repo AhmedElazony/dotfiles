@@ -393,8 +393,14 @@ Scope {
 
                             Text {
                                 anchors.centerIn: parent
-                                text: Notif.NotificationService.count > 0 ? "󰂚" : "󰂛"
-                                color: Notif.NotificationService.count > 0 ? root.theme.accentPrimary : root.theme.textSecondary
+                                text: Notif.NotificationService.doNotDisturb
+                                    ? "󰂛"
+                                    : "󰂚"
+                                color: Notif.NotificationService.count > 0
+                                    ? root.theme.accentPrimary
+                                    : Notif.NotificationService.doNotDisturb
+                                      ? root.theme.textMuted
+                                      : root.theme.textSecondary
                                 font.pixelSize: 14
                                 font.family: root.font
                             }
