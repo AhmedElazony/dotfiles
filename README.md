@@ -64,8 +64,6 @@ sudo chmod +x install.sh
 
 3. **Configure your monitors** in `~/.config/hypr/hyprland.conf`
 
-4. **Set your location** for prayer times in `~/.config/IslamicPrayerTimings/config`
-
 ## ⌨️ Keybindings
 
 | Keybinding            | Action                                             |
