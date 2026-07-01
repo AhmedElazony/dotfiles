@@ -109,7 +109,7 @@ Scope {
     // ── Package count & updates ───────────────────────────
     Process {
         id: pkgProc
-        command: ["sh", "-c", "echo \"$(pacman -Q | wc -l):$(pacman -Qu 2>/dev/null | wc -l)\""]
+        command: ["sh", "-c", "echo \"$(pacman -Q | wc -l):$(checkupdates 2>/dev/null | wc -l)\""]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
