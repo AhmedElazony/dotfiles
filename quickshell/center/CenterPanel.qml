@@ -1521,7 +1521,7 @@ Scope {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: root.powerAction(["hyprctl", "dispatch", "exit"])
+                                onClicked: root.powerAction(["hyprctl", "dispatch", "hl.dsp.exit()"])
                             }
                         }
                     }
