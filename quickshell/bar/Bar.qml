@@ -242,7 +242,7 @@ Scope {
 
                                 MouseArea {
                                     anchors.fill: parent
-                                    onClicked: Hyprland.dispatch("workspace " + wsPill.wsId)
+                                    onClicked: Hyprland.dispatch("hl.dsp.focus({ workspace = " + wsPill.wsId + " })")
                                 }
 
                                 Behavior on width {
