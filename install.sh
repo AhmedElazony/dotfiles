@@ -254,10 +254,10 @@ install_packages() {
     breeze-icons
     papirus-icon-theme
     capitaine-cursors
-	gsettings-desktop-schemas
-	gsettings-system-schemas
-	gsettings-qt5
-	gsettings-qt6
+    gsettings-desktop-schemas
+    gsettings-system-schemas
+    gsettings-qt5
+    gsettings-qt6
   )
 
   # Development & build tools (REQUIRED for building modules)
@@ -639,14 +639,14 @@ EOF
 setup_sddm() {
   log "Setting up SDDM theme..."
 
-  local sddm_theme_dir="/usr/share/sddm/themes/corners"
+  local sddm_theme_dir="/usr/share/sddm/themes/sddm-astronaut-theme"
   local sddm_config_dir="/etc/sddm.conf.d"
 
   # Install theme
-  if [[ -d "$DOTFILES_DIR/sddm/themes/corners" ]]; then
+  if [[ -d "$DOTFILES_DIR/sddm/themes/sddm-astronaut-theme" ]]; then
     sudo mkdir -p "$sddm_theme_dir"
-    sudo cp -r "$DOTFILES_DIR/sddm/themes/corners/"* "$sddm_theme_dir/"
-    log "Installed Corners SDDM theme"
+    sudo cp -r "$DOTFILES_DIR/sddm/themes/sddm-astronaut-theme/"* "$sddm_theme_dir/"
+    log "Installed Astronaut SDDM theme"
   fi
 
   # Install config
@@ -656,9 +656,15 @@ setup_sddm() {
     log "Installed SDDM config"
   fi
 
+  # Copy theme fonts
+  if [[ -d "$DOTFILES_DIR/sddm/themes/sddm-astronaut-theme/Fonts" ]]; then
+    sudo cp -r "$DOTFILES_DIR/sddm/themes/sddm-astronaut-theme/Fonts/"* /usr/share/fonts/
+    log "Copied SDDM Astronaut theme fonts."
+  fi
+
   # Install Hyprland session file
   sudo mkdir -p "/usr/share/wayland-sessions"
-  sudo cp "$DOTFILES_DIR/sddm/hyprland.desktop" "/usr/share/wayland-sessions/hyprland.desktop"
+  sudo cp "$DOTFILES_DIR/sddm/wayland-sessions/hyprland.desktop" "/usr/share/wayland-sessions/hyprland.desktop"
 
   # Enable SDDM
   sudo systemctl enable sddm.service
