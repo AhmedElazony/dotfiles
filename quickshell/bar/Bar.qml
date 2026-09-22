@@ -30,6 +30,17 @@ Scope {
         function toggle(): void { root.barVisible = !root.barVisible; }
     }
 
+    Connections {
+        target: Hyprland
+        function onRawEvent(event) {
+            if (event.name !== "activelayout") return;
+            const args = event.parse(2);
+            if (!args || args.length < 2) return;
+            if (root.mainKeyboardName && args[0] !== root.mainKeyboardName) return;
+            root.keyboardLayout = args[1];
+        }
+    }
+
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
     }
@@ -41,6 +52,18 @@ Scope {
     property int pkgCount: 0
     property int pkgUpdates: 0
     property real mediaProgress: 0
+    property string keyboardLayout: ""
+    property string mainKeyboardName: ""
+
+    readonly property string kbDisplay: {
+        const name = root.keyboardLayout;
+        if (!name) return "";
+        const lower = name.toLowerCase();
+        if (lower.includes("english") || lower.startsWith("us")) return "US";
+        if (lower.includes("arabic") || lower.startsWith("ar")) return "AR";
+        const m = name.match(/^([^ (]+)/);
+        return m ? m[1].slice(0, 2).toUpperCase() : name;
+    }
 
     FileView {
         id: brightnessFile
@@ -125,6 +148,25 @@ Scope {
         running: true
         repeat: true
         onTriggered: pkgProc.running = true
+    }
+
+    // ── Keyboard layout ──────────────────────────────
+    Process {
+        id: kbDetectProc
+        command: ["hyprctl", "devices", "-j"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    const data = JSON.parse(text);
+                    const main = (data.keyboards || []).find(kb => kb.main);
+                    if (main) {
+                        root.mainKeyboardName = main.name;
+                        root.keyboardLayout = main.active_keymap || "";
+                    }
+                } catch (e) { /* ignore */ }
+            }
+        }
     }
 
     Timer {
@@ -694,6 +736,40 @@ Scope {
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: root.pkgUpdates > 0 ? root.pkgUpdates + "" : root.pkgCount + ""
                                 color: root.pkgUpdates > 0 ? root.theme.accentOrange : root.theme.textPrimary
+                                font.pixelSize: 11
+                                font.family: root.font
+                            }
+                        }
+                      }
+
+                    // --- Keyboard layout -------------------------
+                    Rectangle {
+                        height: 24
+                        width: kbContent.width + 12
+                        radius: 12
+                        color: root.theme.bgSurface
+                        visible: root.keyboardLayout !== ""
+
+                        Accessible.role: Accessible.StaticText
+                        Accessible.name: "Keyboard layout: " + root.keyboardLayout
+
+                        Row {
+                            id: kbContent
+                            anchors.centerIn: parent
+                            spacing: 6
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: ""
+                                color: root.theme.accentPrimary
+                                font.pixelSize: 14
+                                font.family: root.font
+                            }
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: root.kbDisplay
+                                color: root.theme.textPrimary
                                 font.pixelSize: 11
                                 font.family: root.font
                             }
