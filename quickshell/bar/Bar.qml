@@ -867,11 +867,14 @@ Scope {
 
                                     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
 
+                                    property point clickPoint: Qt.point(0, 0)
+
                                     onClicked: (mouse) => {
                                         if (mouse.button === Qt.LeftButton) {
                                             modelData.activate()
                                         } else if (mouse.button === Qt.RightButton) {
                                             if (modelData.hasMenu) {
+                                                clickPoint = Qt.point(mouse.x, mouse.y)
                                                 menuAnchor.open()
                                             }
                                         } else if (mouse.button === Qt.MiddleButton) {
@@ -894,8 +897,8 @@ Scope {
                                         anchor.onAnchoring: {
                                             const window = trayDelegate.QsWindow.window;
                                             const widgetRect = window.contentItem.mapFromItem(
-                                            trayDelegate, 0, trayDelegate.height,
-                                            trayDelegate.width, trayDelegate.height);
+                                            trayDelegate, trayDelegate.clickPoint.x, trayDelegate.clickPoint.y,
+                                            1, 1);
                                             menuAnchor.anchor.rect = widgetRect;
                                         }
                                     }
