@@ -616,17 +616,17 @@ post_install() {
   # Setup NVIDIA environment variables if NVIDIA is installed
   if [[ "$INSTALL_NVIDIA" == true ]] || pacman -Qs nvidia-utils &>/dev/null; then
     log "NVIDIA detected - configuring Hyprland for NVIDIA..."
-    mkdir -p "$HOME/.config/hypr"
-    if ! grep -q 'LIBVA_DRIVER_NAME' "$HOME/.config/hypr/env.conf" 2>/dev/null; then
-      cat >>"$HOME/.config/hypr/env.conf" <<'EOF'
+    local nvidia_env="$DOTFILES_DIR/hypr/env.lua"
+    if ! grep -q '^hl\.env("LIBVA_DRIVER_NAME"' "$nvidia_env" 2>/dev/null; then
+      cat >>"$nvidia_env" <<'EOF'
 
-# NVIDIA Configuration
-env = LIBVA_DRIVER_NAME,nvidia
-env = XDG_SESSION_TYPE,wayland
-env = GBM_BACKEND,nvidia-drm
-env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-env = NVD_BACKEND,direct
+-- NVIDIA Configuration
+hl.env("LIBVA_DRIVER_NAME", "nvidia")
+hl.env("GBM_BACKEND", "nvidia-drm")
+hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+hl.env("NVD_BACKEND", "direct")
 EOF
+      log "Added NVIDIA environment variables to $nvidia_env"
     fi
   fi
 
@@ -731,7 +731,7 @@ main() {
   warn "Next steps:"
   echo "  1. Reboot your system: sudo reboot"
   echo "  2. At SDDM login screen, select 'Hyprland' session"
-  echo "  3. Edit $DOTFILES_DIR/hypr/hyprland.conf for your monitors"
+  echo "  3. Edit $DOTFILES_DIR/hypr/hyprland.lua for your monitors"
   echo "  4. Add wallpapers to ~/.local/share/wallpapers/spotlight/"
   echo ""
   if [[ "$INSTALL_NVIDIA" == true ]]; then
